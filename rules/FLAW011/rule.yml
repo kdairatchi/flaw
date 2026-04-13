@@ -1,0 +1,7 @@
+id: FLAW011
+title: Outbound HTTP request to user-controlled URL (SSRF)
+severity: high
+tags: [ssrf, security]
+owasp: "A10:2021 — Server-Side Request Forgery"
+cwe: CWE-918
+detector: http_user_url

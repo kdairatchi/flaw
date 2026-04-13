@@ -34,10 +34,26 @@ module Flaw
       return unless shelly?(node)
       first = node.args.first?
       return unless first.is_a?(Crystal::StringInterpolation)
+      return if all_sanitized?(first)
       line = node.location.try(&.line_number) || 1
       col = node.location.try(&.column_number) || 0
       findings << finding(source, path, line, col - 1,
         "Command built via string interpolation — pass Process.run an argv array or taint-check the inputs")
+    end
+
+    # Every interpolated expression is a literal or a call that can't
+    # produce shell metachars (numeric coercions). Skip.
+    private def all_sanitized?(interp : Crystal::StringInterpolation) : Bool
+      interp.expressions.all? do |e|
+        case e
+        when Crystal::StringLiteral, Crystal::NumberLiteral
+          true
+        when Crystal::Call
+          Taint.sanitized_call?(e)
+        else
+          false
+        end
+      end
     end
 
     private def shelly?(node : Crystal::Call) : Bool

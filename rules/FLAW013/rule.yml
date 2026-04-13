@@ -1,0 +1,7 @@
+id: FLAW013
+title: Tempfile created without atomic O_EXCL
+severity: medium
+tags: [filesystem, security]
+owasp: "A01:2021 — Broken Access Control"
+cwe: CWE-377
+detector: insecure_tempfile

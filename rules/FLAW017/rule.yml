@@ -1,0 +1,7 @@
+id: FLAW017
+title: Regex with nested quantifiers (ReDoS risk)
+severity: low
+tags: [dos, security]
+owasp: "A05:2021 — Security Misconfiguration"
+cwe: CWE-1333
+detector: regex_redos

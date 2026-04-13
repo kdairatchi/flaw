@@ -1,0 +1,7 @@
+id: FLAW014
+title: XML parsed without disabling external entities (XXE)
+severity: high
+tags: [injection, security]
+owasp: "A05:2021 — Security Misconfiguration"
+cwe: CWE-611
+detector: xml_external_entity

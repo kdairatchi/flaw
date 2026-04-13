@@ -1,0 +1,7 @@
+id: FLAW015
+title: Privilege field exposed through Serializable
+severity: medium
+tags: [access-control, security]
+owasp: "A01:2021 — Broken Access Control"
+cwe: CWE-915
+detector: mass_assignment

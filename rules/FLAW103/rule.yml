@@ -1,0 +1,7 @@
+id: FLAW103
+title: Unfinished stub left in source
+severity: medium
+tags: [ai-slop]
+owasp: "N/A — code quality"
+cwe: CWE-1163
+detector: unfinished_stub

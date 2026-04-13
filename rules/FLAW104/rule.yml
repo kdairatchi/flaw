@@ -1,0 +1,7 @@
+id: FLAW104
+title: Exception rescued and silenced
+severity: low
+tags: [ai-slop]
+owasp: "N/A — code quality"
+cwe: CWE-390
+detector: swallowed_rescue

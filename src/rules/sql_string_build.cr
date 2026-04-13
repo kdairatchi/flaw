@@ -1,7 +1,13 @@
 require "./rule"
 
 module Flaw
-  class SqlStringBuild < Rule
+  # FLAW003 — AST-backed. Fires when a `db.query` / `db.exec` / `db.scalar` /
+  # `db.query_one` / `db.query_all` call receives a first argument that is a
+  # `Crystal::StringInterpolation` whose literal parts contain SQL keywords,
+  # OR a `Crystal::Call` with name `+` (string concat) producing the same.
+  # Parameterised calls (`db.query("... WHERE id = ?", id)`) don't fire
+  # because their first arg is a `StringLiteral`.
+  class SqlStringBuild < AstRule
     def id : String
       "FLAW003"
     end
@@ -16,33 +22,46 @@ module Flaw
 
     def description : String
       <<-DESC
-      A SQL statement was assembled using interpolation (`"SELECT ... \#{var}"`)
-      or string concatenation before being passed to a DB client. Use
-      parameterised queries (`db.query("... WHERE id = ?", id)`) instead.
+      A SQL statement was assembled using interpolation or `+` concatenation
+      before being passed to a DB client. Use parameterised queries
+      (`db.query("... WHERE id = ?", id)`) instead.
       DESC
     end
 
-    SQL_KEYWORDS = /\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|WHERE|FROM|INTO)\b/i
+    DB_CALLS    = {"query", "exec", "scalar", "query_one", "query_all", "query_one?"}
+    SQL_KEYWORD = /\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|WHERE|FROM|INTO)\b/i
 
-    # interpolated SQL
-    INTERP = /"[^"]*\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|WHERE|FROM|INTO)\b[^"]*\#\{[^}]+\}[^"]*"/i
-
-    # "... " + var  near sql keyword
-    CONCAT = /"[^"]*\b(SELECT|INSERT|UPDATE|DELETE|WHERE|FROM)\b[^"]*"\s*\+\s*\w+/i
-
-    def check(source : String, path : String) : Array(Finding)
-      results = [] of Finding
-      source.each_line.with_index(1) do |line, idx|
-        next if line.lstrip.starts_with?('#')
-        if m = line.match(INTERP)
-          results << finding(source, path, idx, m.begin(0) || 0,
-            "SQL built via interpolation — use parameterised queries")
-        elsif m = line.match(CONCAT)
-          results << finding(source, path, idx, m.begin(0) || 0,
-            "SQL built via string concatenation — use parameterised queries")
-        end
+    def visit(node, source : String, path : String, findings : Array(Finding)) : Nil
+      return unless node.is_a?(Crystal::Call)
+      return unless DB_CALLS.includes?(node.name)
+      first = node.args.first?
+      return unless first
+      case first
+      when Crystal::StringInterpolation
+        return unless interpolation_has_sql?(first)
+        report(first, source, path, findings,
+          "SQL built via interpolation — use parameterised queries")
+      when Crystal::Call
+        return unless first.name == "+" && concat_has_sql?(first)
+        report(first, source, path, findings,
+          "SQL built via string concatenation — use parameterised queries")
       end
-      results
+    end
+
+    private def interpolation_has_sql?(node : Crystal::StringInterpolation) : Bool
+      node.expressions.any? do |e|
+        e.is_a?(Crystal::StringLiteral) && e.value =~ SQL_KEYWORD
+      end
+    end
+
+    private def concat_has_sql?(node : Crystal::Call) : Bool
+      node.to_s =~ SQL_KEYWORD ? true : false
+    end
+
+    private def report(node, source, path, findings, msg) : Nil
+      line = node.location.try(&.line_number) || 1
+      col  = node.location.try(&.column_number) || 0
+      findings << finding(source, path, line, col - 1, msg)
     end
   end
 end

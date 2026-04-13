@@ -1,0 +1,7 @@
+id: FLAW018
+title: Secret-named value written to log or stdout
+severity: high
+tags: [logging, security]
+owasp: "A09:2021 — Security Logging and Monitoring Failures"
+cwe: CWE-532
+detector: secret_in_log
