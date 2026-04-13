@@ -11,9 +11,9 @@ module Flaw
         Severity::Critical => :red,
       }
 
-      def self.render(findings : Array(Finding), io : IO = STDOUT) : Nil
+      def self.render(findings : Array(Finding), io : IO = STDOUT, quiet : Bool = false) : Nil
         if findings.empty?
-          io.puts "flaw: no findings ✓".colorize(:green)
+          io.puts "flaw: no findings ✓".colorize(:green).mode(:bold) unless quiet
           return
         end
         by_file = findings.group_by(&.file)
@@ -23,6 +23,7 @@ module Flaw
           list.sort_by!(&.line)
           list.each { |f| render_finding(f, io) }
         end
+        return if quiet
         io.puts
         summary(findings, io)
       end

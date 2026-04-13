@@ -1,5 +1,6 @@
 require "option_parser"
 require "colorize"
+require "./branding"
 require "./cli/regex_cmd"
 
 module Flaw
@@ -7,11 +8,14 @@ module Flaw
     FORMATS = %w[pretty json sarif]
 
     def self.run(argv : Array(String)) : Nil
+      Colorize.enabled = Branding.color_enabled?
       subcommand = argv.shift? || "scan"
 
       case subcommand
-      when "version", "--version", "-v"
+      when "version", "--version"
         puts "flaw #{Flaw::VERSION}"
+      when "banner"
+        Branding.banner
       when "rules"
         show_rules(argv)
       when "lint-rules"
@@ -42,6 +46,9 @@ module Flaw
       include_tags = [] of String
       exclude_tags = [] of String
       paths = [] of String
+      verbose = false
+      quiet = false
+      no_banner = false
 
       parser = OptionParser.new do |p|
         p.banner = "usage: flaw scan [options] [path...]"
@@ -51,6 +58,10 @@ module Flaw
         p.on("--baseline FILE", "Suppress findings listed in baseline file") { |v| baseline_path = v }
         p.on("--include-tag TAG", "Only run rules with TAG (repeatable)") { |v| include_tags << v }
         p.on("--exclude-tag TAG", "Skip rules with TAG (repeatable)") { |v| exclude_tags << v }
+        p.on("-v", "--verbose", "Print rule count, per-path progress, and timing") { verbose = true }
+        p.on("-q", "--quiet", "Suppress the summary footer") { quiet = true }
+        p.on("--no-banner", "Suppress the banner header") { no_banner = true }
+        p.on("--no-color", "Disable ANSI colors") { Colorize.enabled = false }
         p.on("-h", "--help", "Show help") { puts p; exit 0 }
         p.unknown_args do |args, _|
           paths.concat(args)
@@ -73,18 +84,40 @@ module Flaw
       selected = Rule.all
       selected = selected.select { |r| include_tags.includes?(r.tag) } unless include_tags.empty?
       selected = selected.reject { |r| exclude_tags.includes?(r.tag) } unless exclude_tags.empty?
+
+      show_header = format == "pretty" && !no_banner && !quiet
+      Branding.banner(STDERR) if show_header
+      if verbose
+        STDERR.puts "flaw: #{selected.size} rules active · paths=#{paths.join(", ")}".colorize(:dark_gray)
+      end
+
       scanner = Scanner.new(selected, config)
       all = [] of Finding
-      paths.each { |p| all.concat(scanner.scan(p)) }
+      started = Time.instant
+      paths.each do |p|
+        if verbose
+          t0 = Time.instant
+          found = scanner.scan(p)
+          STDERR.puts "  scanned #{p} · #{found.size} findings · #{(Time.instant - t0).total_milliseconds.round(1)}ms".colorize(:dark_gray)
+          all.concat(found)
+        else
+          all.concat(scanner.scan(p))
+        end
+      end
+      elapsed = Time.instant - started
 
       if bp = baseline_path
         all = Baseline.filter(all, Baseline.load(bp))
       end
 
       case format
-      when "pretty" then Formatters::Pretty.render(all)
+      when "pretty" then Formatters::Pretty.render(all, STDOUT, quiet: quiet)
       when "json"   then Formatters::JsonFmt.render(all)
       when "sarif"  then Formatters::Sarif.render(all)
+      end
+
+      if verbose && format == "pretty" && !quiet
+        STDERR.puts "flaw: scan took #{elapsed.total_seconds.round(2)}s".colorize(:dark_gray)
       end
 
       hit = all.any? { |f| f.severity >= threshold }
@@ -260,6 +293,8 @@ module Flaw
     end
 
     private def self.print_help : Nil
+      Branding.banner
+      puts
       puts <<-HELP
       flaw #{Flaw::VERSION} — find security flaws in Crystal code
 
@@ -274,7 +309,11 @@ module Flaw
         flaw init rule FLAWNNN slug
         flaw regex test <pattern> <input>
         flaw regex help
+        flaw banner
         flaw version
+
+      env:
+        NO_COLOR / FLAW_NO_COLOR   disable ANSI colors (or use --no-color)
         flaw help
 
       docs:  https://github.com/kdairatchi/flaw
