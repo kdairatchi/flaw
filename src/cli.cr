@@ -15,6 +15,10 @@ module Flaw
         show_rules(argv)
       when "lint-rules"
         exit(LintRules.run(argv.first? || "rules"))
+      when "doctor"
+        exit(Doctor.run)
+      when "baseline"
+        exit(baseline_cmd(argv))
       when "init"
         init(argv)
       when "scan"
@@ -31,6 +35,9 @@ module Flaw
       format = "pretty"
       fail_on = "medium"
       config_path = ".flaw.yml"
+      baseline_path : String? = nil
+      include_tags = [] of String
+      exclude_tags = [] of String
       paths = [] of String
 
       parser = OptionParser.new do |p|
@@ -38,6 +45,9 @@ module Flaw
         p.on("--format FORMAT", "Output format: #{FORMATS.join(", ")}") { |v| format = v }
         p.on("--fail-on LEVEL", "Fail if any finding >= LEVEL (info/low/medium/high/critical)") { |v| fail_on = v }
         p.on("--config FILE", "Config file (default: .flaw.yml)") { |v| config_path = v }
+        p.on("--baseline FILE", "Suppress findings listed in baseline file") { |v| baseline_path = v }
+        p.on("--include-tag TAG", "Only run rules with TAG (repeatable)") { |v| include_tags << v }
+        p.on("--exclude-tag TAG", "Skip rules with TAG (repeatable)") { |v| exclude_tags << v }
         p.on("-h", "--help", "Show help") { puts p; exit 0 }
         p.unknown_args do |args, _|
           paths.concat(args)
@@ -57,9 +67,16 @@ module Flaw
       end
 
       config = Config.load(config_path)
-      scanner = Scanner.new(Rule.all, config)
+      selected = Rule.all
+      selected = selected.select { |r| include_tags.includes?(r.tag) } unless include_tags.empty?
+      selected = selected.reject { |r| exclude_tags.includes?(r.tag) } unless exclude_tags.empty?
+      scanner = Scanner.new(selected, config)
       all = [] of Finding
       paths.each { |p| all.concat(scanner.scan(p)) }
+
+      if bp = baseline_path
+        all = Baseline.filter(all, Baseline.load(bp))
+      end
 
       case format
       when "pretty" then Formatters::Pretty.render(all)
@@ -218,14 +235,38 @@ module Flaw
       puts "flaw: next — implement the detector, fill the fixtures, add to rules/README.md"
     end
 
+    private def self.baseline_cmd(argv : Array(String)) : Int32
+      out_path = ".flaw-baseline.json"
+      config_path = ".flaw.yml"
+      paths = [] of String
+      parser = OptionParser.new do |p|
+        p.banner = "usage: flaw baseline [--out FILE] [--config FILE] [path...]"
+        p.on("--out FILE", "Baseline output path (default .flaw-baseline.json)") { |v| out_path = v }
+        p.on("--config FILE", "Config file") { |v| config_path = v }
+        p.on("-h", "--help", "Show help") { puts p; exit 0 }
+        p.unknown_args { |args, _| paths.concat(args) }
+      end
+      parser.parse(argv)
+      paths << "." if paths.empty?
+      scanner = Scanner.new(Rule.all, Config.load(config_path))
+      all = [] of Finding
+      paths.each { |p| all.concat(scanner.scan(p)) }
+      Baseline.save(all, out_path)
+      puts "flaw: wrote #{all.size} findings to #{out_path}"
+      0
+    end
+
     private def self.print_help : Nil
       puts <<-HELP
       flaw #{Flaw::VERSION} — find security flaws in Crystal code
 
       usage:
-        flaw scan [--format pretty|json|sarif] [--fail-on LEVEL] [path...]
+        flaw scan [--format pretty|json|sarif] [--fail-on LEVEL]
+                  [--baseline FILE] [--include-tag TAG] [--exclude-tag TAG] [path...]
         flaw rules [RULE_ID]
         flaw lint-rules [rules_dir]
+        flaw doctor
+        flaw baseline [--out FILE] [path...]
         flaw init config [PATH]
         flaw init rule FLAWNNN slug
         flaw version

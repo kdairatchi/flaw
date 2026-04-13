@@ -12,7 +12,7 @@ license: MIT
 
 targets:
   flaw:
-    main: src/flaw.cr
+    main: src/main.cr
 
 # v0.1 has zero external runtime deps.
 # AST parsing uses `compiler/crystal/syntax` from the compiler source

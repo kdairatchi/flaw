@@ -61,6 +61,14 @@ module Flaw
           end
         end
 
+        fp_path = File.join(path, "fp.cr")
+        if rule && File.exists?(fp_path)
+          findings = Scanner.new([rule], Config.new([] of String)).scan(fp_path)
+          if findings.any? { |f| f.rule_id == dir }
+            issues << Issue.new(dir, :error, "fp.cr falsely fires #{dir} — tighten the detector")
+          end
+        end
+
         if rule.nil? && File.exists?(yml_path)
           issues << Issue.new(dir, :warn, "no detector registered for #{dir} — check src/rules/*.cr")
         end

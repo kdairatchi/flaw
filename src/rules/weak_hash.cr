@@ -24,7 +24,7 @@ module Flaw
     end
 
     WEAK_CALL  = /\b(Digest::MD5|Digest::SHA1|OpenSSL::Digest\.new\("(?:MD5|SHA1)"\))/
-    SENSITIVE  = /\b(password|passwd|pwd|hmac|signature|digest|integrity|hash_password|verify)\b/i
+    SENSITIVE  = /\b(password|passwd|hmac|signature|integrity|hash_password|verify_sig)\b/i
 
     def check(source : String, path : String) : Array(Finding)
       results = [] of Finding

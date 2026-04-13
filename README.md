@@ -1,5 +1,5 @@
 <div align="center">
-  <img alt="flaw logo" src="docs/static/flaw-wide.webp" width="500px;">
+  <img alt="flaw logo" src="docs/static/flaw-wide.svg" width="500px;">
   <p>A fast static analysis tool for finding security flaws in Crystal code.</p>
 </div>
 

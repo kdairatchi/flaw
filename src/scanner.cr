@@ -9,12 +9,15 @@ module Flaw
     def scan(root : String) : Array(Finding)
       results = [] of Finding
       files(root).each do |path|
-        source = File.read(path)
+        source = File.read(path, encoding: "UTF-8", invalid: :skip)
+        masked = SourcePrep.mask_heredocs(source)
+        suppression = Suppression.parse(source)
         rules.each do |rule|
           override = config.rule_overrides[rule.id]?
           next if override && override.disabled
           next if override && override.ignore.any? { |pat| path.includes?(pat) }
-          rule.check(source, path).each do |f|
+          rule.check(masked, path).each do |f|
+            next if suppression.suppressed?(f.rule_id, f.line)
             f = apply_override(f, override)
             results << f
           end

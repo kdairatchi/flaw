@@ -49,6 +49,7 @@ module Flaw
           # skip obvious placeholders
           next if value =~ /^(your[_-]?|example|placeholder|xxx+|changeme|todo)/i
           next if value.chars.uniq.size < 6
+          next if Entropy.shannon(value) < 3.5
           results << finding(source, path, idx, m.begin(0) || 0,
             "Hardcoded secret assigned to '#{m[1]}' — move to ENV or config file")
         end
