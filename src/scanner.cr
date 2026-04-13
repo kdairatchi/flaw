@@ -12,12 +12,27 @@ module Flaw
         source = File.read(path, encoding: "UTF-8", invalid: :skip)
         masked = SourcePrep.mask_heredocs(source)
         suppression = Suppression.parse(source)
+        ast_rules = [] of AstRule
+
         rules.each do |rule|
           override = config.rule_overrides[rule.id]?
           next if override && override.disabled
           next if override && override.ignore.any? { |pat| path.includes?(pat) }
+          if rule.is_a?(AstRule)
+            ast_rules << rule
+            next
+          end
           rule.check(masked, path).each do |f|
             next if suppression.suppressed?(f.rule_id, f.line)
+            f = apply_override(f, override)
+            results << f
+          end
+        end
+
+        unless ast_rules.empty?
+          AstBackend.run(ast_rules, source, path).each do |f|
+            next if suppression.suppressed?(f.rule_id, f.line)
+            override = config.rule_overrides[f.rule_id]?
             f = apply_override(f, override)
             results << f
           end

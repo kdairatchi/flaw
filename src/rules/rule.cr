@@ -15,7 +15,9 @@ module Flaw
     REGISTRY = [] of Rule.class
 
     macro inherited
-      Flaw::Rule::REGISTRY << {{@type}}
+      {% unless @type.abstract? %}
+        Flaw::Rule::REGISTRY << {{@type}}
+      {% end %}
     end
 
     def self.all : Array(Rule)
@@ -31,5 +33,17 @@ module Flaw
     protected def finding(source, path, line, column, message) : Finding
       Finding.new(id, default_severity, title, message, path, line, column, snippet_of(source, line))
     end
+  end
+
+  # AST-backed rule. Subclasses override `visit` and are fed every parsed
+  # node by a shared `AstBackend::Visitor`, so each file is parsed once
+  # regardless of how many AST rules are active. `check` is a no-op — the
+  # Scanner routes these through the AST tier instead.
+  abstract class AstRule < Rule
+    def check(source : String, path : String) : Array(Finding)
+      [] of Finding
+    end
+
+    abstract def visit(node, source : String, path : String, findings : Array(Finding)) : Nil
   end
 end

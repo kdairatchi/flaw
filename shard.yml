@@ -6,7 +6,7 @@ description: |
 authors:
   - kdairatchi <96064915+kdairatchi@users.noreply.github.com>
 
-crystal: ">= 1.19.0"
+crystal: "~> 1.19"
 
 license: MIT
 
