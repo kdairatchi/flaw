@@ -44,15 +44,24 @@ module Flaw
     # Every interpolated expression is a literal or a call that can't
     # produce shell metachars (numeric coercions). Skip.
     private def all_sanitized?(interp : Crystal::StringInterpolation) : Bool
-      interp.expressions.all? do |e|
-        case e
-        when Crystal::StringLiteral, Crystal::NumberLiteral
-          true
-        when Crystal::Call
-          Taint.sanitized_call?(e)
+      interp.expressions.all? { |e| safe?(e, 0) }
+    end
+
+    private def safe?(e, depth : Int32) : Bool
+      return false if depth > 3
+      case e
+      when Crystal::StringLiteral, Crystal::NumberLiteral, Crystal::BoolLiteral, Crystal::SymbolLiteral, Crystal::CharLiteral
+        true
+      when Crystal::Call
+        Taint.sanitized_call?(e)
+      when Crystal::Var
+        if bound = Taint.current_bindings.try(&.resolve(e.name))
+          safe?(bound, depth + 1)
         else
           false
         end
+      else
+        false
       end
     end
 

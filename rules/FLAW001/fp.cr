@@ -9,3 +9,7 @@ puts greeting
 
 logline = "exec: cat /etc/hosts"
 puts logline
+
+# Binding-resolved: cmd is a literal, so the interpolated system call is safe.
+cmd = "/usr/bin/uptime"
+system("echo #{cmd}")

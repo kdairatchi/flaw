@@ -1,3 +1,5 @@
+require "./analysis/bindings"
+
 module Flaw
   # Shape-based taint predicates. This is deliberately *local* — we look at
   # direct AST node shapes without full call-graph tracing. It's enough to
@@ -21,6 +23,11 @@ module Flaw
 
     # Method receivers whose calls are generally safe (escape/encode classes).
     SAFE_RECEIVERS = {"URI", "HTML", "JSON", "Base64", "Crypto::Subtle"}
+
+    # Per-file bindings, set by AstBackend.run for the duration of rule
+    # dispatch. Rules resolve `Var` references through this to peek at the
+    # RHS of local assignments.
+    class_property current_bindings : Analysis::Bindings?
 
     def self.tainted?(node) : Bool
       return false unless node.is_a?(Crystal::ASTNode)

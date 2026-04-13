@@ -40,8 +40,15 @@ module Flaw
       return findings if rules.empty?
       root = parse(source)
       return findings unless root
-      visitor = Visitor.new(rules, source, path, findings)
-      root.accept(visitor)
+      {% unless flag?(:flaw_no_ast) %}
+        Taint.current_bindings = Analysis.collect(root)
+      {% end %}
+      begin
+        visitor = Visitor.new(rules, source, path, findings)
+        root.accept(visitor)
+      ensure
+        Taint.current_bindings = nil
+      end
       findings
     end
 
