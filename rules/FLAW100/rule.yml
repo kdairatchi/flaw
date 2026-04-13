@@ -1,0 +1,5 @@
+id: FLAW100
+title: Explanatory narration comment (AI-slop tell)
+severity: low
+tags: [ai-slop, hygiene]
+detector: explanatory_comment

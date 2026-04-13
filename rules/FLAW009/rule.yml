@@ -1,0 +1,7 @@
+id: FLAW009
+title: Weak hash used for password or integrity
+severity: high
+tags: [crypto, hash]
+owasp: A02:2021 — Cryptographic Failures
+cwe: CWE-328
+detector: weak_hash

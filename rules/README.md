@@ -4,24 +4,26 @@ This directory is the single source of truth for every rule `flaw` ships with. E
 
 ```
 rules/FLAWNNN/
-├── rule.yml    # id, title, severity, tags, owasp, references
-├── bad.cr      # code that MUST fire this rule (and only this rule, ideally)
+├── rule.yml    # id, title, severity, tags, owasp, cwe, detector, references
+├── bad.cr      # code that MUST fire this rule
 ├── good.cr     # the fixed version — MUST NOT fire this rule
 └── README.md   # human docs: what, why, how to fix
 ```
 
-The CI runs `flaw scan rules/*/bad.cr` and expects findings. It also runs `flaw scan rules/*/good.cr` and expects zero findings above `medium`. Both must pass for the build to be green.
+`flaw lint-rules` enforces the contract. It validates every folder name, every `rule.yml` schema, every `detector` pointer, and runs each rule against its own `bad.cr` + `good.cr` — build fails if any drifts.
 
 ## Add a rule
 
 ```bash
-flaw init rule FLAW009 my-new-rule
-# scaffolds rules/FLAW009/ with stubs
+flaw init rule FLAW011 my-new-rule
+# scaffolds rules/FLAW011/ and src/rules/my_new_rule.cr
 ```
 
-Then implement the detector at `src/rules/my_new_rule.cr`, wire it into the rule registry (it auto-registers), and open a PR.
+Implement the detector (it auto-registers via `Rule.inherited`), fill in `bad.cr` and `good.cr`, run `flaw lint-rules`, open a PR.
 
-## Catalog
+## Categories
+
+**Security rules (`FLAW0xx`)** — real vulnerabilities, exit-code-1 in CI.
 
 | ID | Severity | Tag | Flaw |
 |---|---|---|---|
@@ -33,3 +35,13 @@ Then implement the detector at `src/rules/my_new_rule.cr`, wire it into the rule
 | [FLAW006](FLAW006/README.md) | high     | path            | Path traversal via user-controlled path |
 | [FLAW007](FLAW007/README.md) | medium   | redirect        | Open redirect from user-supplied URL |
 | [FLAW008](FLAW008/README.md) | high     | deserialization | Unsafe deserialization of untrusted bytes |
+| [FLAW009](FLAW009/README.md) | high     | crypto          | Weak hash (MD5/SHA1) for password or integrity |
+| [FLAW010](FLAW010/README.md) | high     | crypto          | TLS certificate verification disabled |
+
+**AI-slop rules (`FLAW1xx`)** — code hygiene: detect unedited LLM paste-through. Low/medium severity, meant for `--fail-on medium` in CI after the codebase is clean.
+
+| ID | Severity | Tag | Flaw |
+|---|---|---|---|
+| [FLAW100](FLAW100/README.md) | low      | ai-slop  | Explanatory narration comment ("This function does X") |
+| [FLAW101](FLAW101/README.md) | medium   | ai-slop  | AI assistant boilerplate in strings or comments |
+| [FLAW102](FLAW102/README.md) | medium   | ai-slop  | Placeholder value never replaced (`your-api-key-here`, `REPLACE_ME`) |

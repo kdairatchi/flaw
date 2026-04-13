@@ -1,0 +1,5 @@
+id: FLAW101
+title: AI assistant boilerplate leaked into source
+severity: medium
+tags: [ai-slop, hygiene]
+detector: ai_assistant_leak

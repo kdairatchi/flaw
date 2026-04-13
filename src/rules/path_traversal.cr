@@ -37,7 +37,7 @@ module Flaw
         PATTERNS.each do |re|
           if m = line.match(re)
             # reduce FP: require a user-input hint somewhere on the line
-            next unless line =~ USER_SRC || line.includes?("\#{")
+            next unless line =~ USER_SRC
             results << finding(source, path, idx, m.begin(0) || 0,
               "File path built from user input — normalise via File.expand_path and check it stays inside an allowed root")
             break

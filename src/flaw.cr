@@ -4,6 +4,7 @@ require "./rules/rule"
 require "./rules/*"
 require "./formatters/*"
 require "./scanner"
+require "./lint_rules"
 require "./cli"
 
 module Flaw

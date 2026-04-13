@@ -13,6 +13,8 @@ module Flaw
         puts "flaw #{Flaw::VERSION}"
       when "rules"
         show_rules(argv)
+      when "lint-rules"
+        exit(LintRules.run(argv.first? || "rules"))
       when "init"
         init(argv)
       when "scan"
@@ -82,8 +84,12 @@ module Flaw
         puts rule.description
       else
         puts "flaw built-in rules:"
-        Rule.all.sort_by(&.id).each do |r|
-          puts "  #{r.id}  [#{r.default_severity.label.ljust(8)}]  #{r.title}"
+        Rule.all.group_by(&.tag).each do |tag, group|
+          puts
+          puts "  [#{tag}]".colorize(:white).mode(:bold)
+          group.sort_by(&.id).each do |r|
+            puts "    #{r.id}  [#{r.default_severity.label.ljust(8)}]  #{r.title}"
+          end
         end
         puts
         puts "run `flaw rules FLAW001` to see details for a rule."
@@ -219,6 +225,7 @@ module Flaw
       usage:
         flaw scan [--format pretty|json|sarif] [--fail-on LEVEL] [path...]
         flaw rules [RULE_ID]
+        flaw lint-rules [rules_dir]
         flaw init config [PATH]
         flaw init rule FLAWNNN slug
         flaw version

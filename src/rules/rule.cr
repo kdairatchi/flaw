@@ -6,6 +6,12 @@ module Flaw
     abstract def description : String
     abstract def check(source : String, path : String) : Array(Finding)
 
+    # Category for grouping in `flaw rules` output and the README catalog.
+    # Override in rule subclasses. Default: "security".
+    def tag : String
+      "security"
+    end
+
     REGISTRY = [] of Rule.class
 
     macro inherited

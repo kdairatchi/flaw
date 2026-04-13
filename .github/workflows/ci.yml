@@ -17,6 +17,9 @@ jobs:
       - run: crystal spec
       - run: shards build --release
 
+      - name: Validate rules directory contract
+        run: ./bin/flaw lint-rules
+
       - name: Every bad.cr must fire its rule
         run: |
           set -e

@@ -1,0 +1,5 @@
+id: FLAW102
+title: Placeholder value left in source
+severity: medium
+tags: [ai-slop, hygiene]
+detector: placeholder_value

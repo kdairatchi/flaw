@@ -70,13 +70,15 @@ Download from the [Releases page](https://github.com/kdairatchi/flaw/releases) �
 ## Quickstart
 
 ```bash
-flaw scan .                        # scan current directory, pretty output
-flaw scan src/ --format json       # JSON for agents / pipelines
+flaw scan .                              # scan current directory, pretty output
+flaw scan src/ --format json             # JSON for agents / pipelines
 flaw scan . --format sarif > flaw.sarif
-flaw scan . --fail-on high         # CI: exit 1 if any high+ finding
-flaw rules                         # list built-in rules
-flaw rules FLAW001                 # show rule detail
-flaw init                          # drop a .flaw.yml config stub
+flaw scan . --fail-on high               # CI: exit 1 if any high+ finding
+flaw rules                               # list built-in rules, grouped by tag
+flaw rules FLAW001                       # show rule detail
+flaw lint-rules                          # validate rules/ directory contract
+flaw init config                         # drop a .flaw.yml config stub
+flaw init rule FLAW011 my-new-rule       # scaffold a new rule folder + detector
 ```
 
 ## GitHub Action
@@ -100,18 +102,36 @@ jobs:
 
 ## Rules
 
+### Security (`FLAW0xx`)
+
 | ID | Severity | Flaw |
 |---|---|---|
 | [`FLAW001`](rules/FLAW001/README.md) | critical | Command built from string interpolation |
 | [`FLAW002`](rules/FLAW002/README.md) | high     | Hardcoded secret literal |
 | [`FLAW003`](rules/FLAW003/README.md) | high     | SQL built via interpolation or concatenation |
-| [`FLAW004`](rules/FLAW004/README.md) | high     | Weak RNG used near security-sensitive identifier |
+| [`FLAW004`](rules/FLAW004/README.md) | high     | Weak RNG near security-sensitive identifier |
 | [`FLAW005`](rules/FLAW005/README.md) | medium   | YAML parsed from untrusted input |
 | [`FLAW006`](rules/FLAW006/README.md) | high     | File access with user-controlled path |
 | [`FLAW007`](rules/FLAW007/README.md) | medium   | Redirect to user-supplied URL without allowlist |
 | [`FLAW008`](rules/FLAW008/README.md) | high     | Deserialization of untrusted data |
+| [`FLAW009`](rules/FLAW009/README.md) | high     | Weak hash (MD5/SHA1) for password or integrity |
+| [`FLAW010`](rules/FLAW010/README.md) | high     | TLS certificate verification disabled |
 
-Every rule lives in its own folder under [`rules/`](rules/) with the detector, a vulnerable fixture (`bad.cr`), a fixed version (`good.cr`), metadata (`rule.yml`), and docs. Add one with `flaw init rule FLAW009 my-rule`.
+### AI-slop / hygiene (`FLAW1xx`)
+
+Detects unedited LLM paste-through — the smell of vibe-coded Claude/ChatGPT output shipped without review. Novel territory: no other linter looks for these.
+
+| ID | Severity | Flaw |
+|---|---|---|
+| [`FLAW100`](rules/FLAW100/README.md) | low      | Explanatory narration comment ("This function does X") |
+| [`FLAW101`](rules/FLAW101/README.md) | medium   | AI assistant boilerplate leaked into source |
+| [`FLAW102`](rules/FLAW102/README.md) | medium   | Placeholder value left in source (`your-api-key-here`, `REPLACE_ME`) |
+
+Every rule lives in its own folder under [`rules/`](rules/) with the detector, a vulnerable fixture (`bad.cr`), a fixed version (`good.cr`), metadata (`rule.yml`), and docs. Add one with `flaw init rule FLAW011 my-rule`.
+
+## Rule validator
+
+`flaw lint-rules` enforces the rule contract — every folder matches `FLAWNNN`, has all four required files, the `rule.yml` parses and has the required keys, the detector file exists, and each `bad.cr` + `good.cr` behaves as claimed. Run it in CI as the gatekeeper for rule contributions.
 
 ## Configuration
 

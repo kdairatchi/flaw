@@ -1,0 +1,7 @@
+id: FLAW010
+title: TLS certificate verification disabled
+severity: high
+tags: [crypto, tls]
+owasp: A02:2021 — Cryptographic Failures
+cwe: CWE-295
+detector: tls_verify_disabled
