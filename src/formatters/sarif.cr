@@ -15,12 +15,24 @@ module Flaw
       def self.render(findings : Array(Finding), io : IO = STDOUT) : Nil
         rules_used = findings.map(&.rule_id).uniq.map do |id|
           f = findings.find(&.rule_id.==(id)).not_nil!
-          {
-            "id"               => id,
-            "name"             => id,
-            "shortDescription" => {"text" => f.title},
+          meta = Rule::METADATA[id]?
+          tags = [] of String
+          if m = meta
+            if cwe = m[:cwe]
+              tags << cwe
+            end
+            if owasp = m[:owasp]
+              tags << "OWASP-#{owasp}"
+            end
+          end
+          rule = {
+            "id"                   => id,
+            "name"                 => id,
+            "shortDescription"     => {"text" => f.title},
             "defaultConfiguration" => {"level" => SEV_TO_LEVEL[f.severity]},
+            "properties"           => {"tags" => tags, "security-severity" => security_severity(f.severity)},
           }
+          rule
         end
 
         results = findings.map do |f|
@@ -53,6 +65,16 @@ module Flaw
           }],
         }.to_json(io)
         io.puts
+      end
+
+      private def self.security_severity(sev : Severity) : String
+        case sev
+        when Severity::Critical then "9.0"
+        when Severity::High     then "7.5"
+        when Severity::Medium   then "5.0"
+        when Severity::Low      then "3.0"
+        else                         "1.0"
+        end
       end
     end
   end
