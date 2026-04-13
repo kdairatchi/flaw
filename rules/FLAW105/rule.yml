@@ -1,0 +1,7 @@
+id: FLAW105
+title: Commented-out authorization or authentication check
+severity: high
+tags: [ai-slop, auth, security]
+owasp: "A01:2021 — Broken Access Control"
+cwe: CWE-862
+detector: commented_auth

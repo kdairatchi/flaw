@@ -1,0 +1,7 @@
+id: FLAW023
+title: JWT with alg:none or verification disabled
+severity: critical
+tags: [auth, crypto, security]
+owasp: "A02:2021 — Cryptographic Failures"
+cwe: CWE-347
+detector: jwt_alg_none

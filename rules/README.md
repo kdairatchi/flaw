@@ -45,6 +45,12 @@ Implement the detector (it auto-registers via `Rule.inherited`), fill in `bad.cr
 | [FLAW016](FLAW016/README.md) | medium   | crypto          | TLS minimum version set to a deprecated protocol |
 | [FLAW017](FLAW017/README.md) | low      | dos             | Regex with nested quantifiers (ReDoS) |
 | [FLAW018](FLAW018/README.md) | high     | logging         | Secret-named value written to log or stdout |
+| [FLAW019](FLAW019/README.md) | medium   | cookie          | Cookie without Secure / HttpOnly / SameSite flags |
+| [FLAW020](FLAW020/README.md) | high     | crypto          | ECB cipher mode used |
+| [FLAW021](FLAW021/README.md) | high     | crypto          | Hardcoded IV / nonce / salt |
+| [FLAW022](FLAW022/README.md) | high     | path-traversal  | Archive entry extracted without normalization (zip-slip) |
+| [FLAW023](FLAW023/README.md) | critical | auth            | JWT with alg:none or verify disabled |
+| [FLAW024](FLAW024/README.md) | high     | cors            | CORS wildcard / echoed origin with credentials |
 
 **AI-slop rules (`FLAW1xx`)** — code hygiene: detect unedited LLM paste-through. Low/medium severity, meant for `--fail-on medium` in CI after the codebase is clean.
 
@@ -55,3 +61,4 @@ Implement the detector (it auto-registers via `Rule.inherited`), fill in `bad.cr
 | [FLAW102](FLAW102/README.md) | medium   | ai-slop  | Placeholder value never replaced (`your-api-key-here`, `REPLACE_ME`) |
 | [FLAW103](FLAW103/README.md) | medium   | ai-slop  | Unfinished stub (`raise NotImplementedError`, `# TODO: implement`) |
 | [FLAW104](FLAW104/README.md) | low      | ai-slop  | Broad swallow rescue (`rescue Exception; nil`) |
+| [FLAW105](FLAW105/README.md) | high     | ai-slop  | Commented-out authorization / authentication check |

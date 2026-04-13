@@ -1,0 +1,7 @@
+id: FLAW019
+title: Cookie set without Secure / HttpOnly / SameSite flags
+severity: medium
+tags: [cookie, security]
+owasp: "A05:2021 — Security Misconfiguration"
+cwe: CWE-1004
+detector: insecure_cookie

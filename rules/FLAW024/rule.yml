@@ -1,0 +1,7 @@
+id: FLAW024
+title: CORS Allow-Origin * combined with Allow-Credentials true
+severity: high
+tags: [cors, security]
+owasp: "A05:2021 — Security Misconfiguration"
+cwe: CWE-942
+detector: cors_wildcard_credentials

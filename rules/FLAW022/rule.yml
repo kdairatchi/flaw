@@ -1,0 +1,7 @@
+id: FLAW022
+title: Archive entry extracted without path normalization (zip-slip)
+severity: high
+tags: [path-traversal, security]
+owasp: "A01:2021 — Broken Access Control"
+cwe: CWE-22
+detector: zip_slip
