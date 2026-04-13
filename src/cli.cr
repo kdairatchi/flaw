@@ -1,5 +1,6 @@
 require "option_parser"
 require "colorize"
+require "./cli/regex_cmd"
 
 module Flaw
   module CLI
@@ -21,6 +22,8 @@ module Flaw
         exit(baseline_cmd(argv))
       when "init"
         init(argv)
+      when "regex"
+        RegexCmd.run(argv)
       when "scan"
         scan(argv)
       when "help", "--help", "-h"
@@ -269,6 +272,8 @@ module Flaw
         flaw baseline [--out FILE] [path...]
         flaw init config [PATH]
         flaw init rule FLAWNNN slug
+        flaw regex test <pattern> <input>
+        flaw regex help
         flaw version
         flaw help
 
