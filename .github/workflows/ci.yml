@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: "1.19.1"
+      - run: shards install
+      - run: crystal spec
+      - run: shards build --release
+
+      - name: Every bad.cr must fire its rule
+        run: |
+          set -e
+          for f in rules/FLAW*/bad.cr; do
+            id="$(basename "$(dirname "$f")")"
+            if ! ./bin/flaw scan "$f" --format json | grep -q "\"rule_id\":\"$id\""; then
+              echo "::error::$id not detected in $f"
+              exit 1
+            fi
+          done
+
+      - name: Every good.cr must be clean at medium+
+        run: |
+          set -e
+          for f in rules/FLAW*/good.cr; do
+            ./bin/flaw scan "$f" --fail-on medium
+          done
+
+      - name: Self-scan src/ (dogfood)
+        run: ./bin/flaw scan src/ --fail-on high

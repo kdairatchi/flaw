@@ -1,0 +1,20 @@
+name: flaw
+version: 0.1.0
+description: |
+  A fast static analysis tool for finding security flaws in Crystal code.
+
+authors:
+  - kdairatchi <96064915+kdairatchi@users.noreply.github.com>
+
+crystal: ">= 1.19.0"
+
+license: MIT
+
+targets:
+  flaw:
+    main: src/flaw.cr
+
+# v0.1 has zero external runtime deps.
+# AST parsing uses `compiler/crystal/syntax` from the compiler source
+# (shipped with Crystal, requires CRYSTAL_PATH to include the compiler's src dir
+# — falls back gracefully to regex-only rules when unavailable).

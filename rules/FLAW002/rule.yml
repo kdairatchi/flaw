@@ -1,0 +1,7 @@
+id: FLAW002
+title: Hardcoded secret literal
+severity: high
+tags: [secrets, credentials]
+owasp: A07:2021 — Identification and Authentication Failures
+cwe: CWE-798
+detector: hardcoded_secret

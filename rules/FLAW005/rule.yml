@@ -1,0 +1,7 @@
+id: FLAW005
+title: YAML parsed from untrusted input
+severity: medium
+tags: [deserialization, yaml]
+owasp: A08:2021 — Software and Data Integrity Failures
+cwe: CWE-502
+detector: unsafe_yaml_load

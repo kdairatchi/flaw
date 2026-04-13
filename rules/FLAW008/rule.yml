@@ -1,0 +1,7 @@
+id: FLAW008
+title: Deserialization of untrusted data
+severity: high
+tags: [deserialization, json, msgpack]
+owasp: A08:2021 — Software and Data Integrity Failures
+cwe: CWE-502
+detector: unsafe_deserialize

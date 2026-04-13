@@ -1,0 +1,7 @@
+id: FLAW003
+title: SQL built via interpolation or concatenation
+severity: high
+tags: [injection, sql]
+owasp: A03:2021 — Injection
+cwe: CWE-89
+detector: sql_string_build

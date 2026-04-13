@@ -1,0 +1,7 @@
+id: FLAW004
+title: Non-cryptographic RNG used for security-sensitive value
+severity: high
+tags: [crypto, randomness]
+owasp: A02:2021 — Cryptographic Failures
+cwe: CWE-338
+detector: weak_random

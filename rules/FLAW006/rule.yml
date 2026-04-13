@@ -1,0 +1,7 @@
+id: FLAW006
+title: File access with user-controlled path
+severity: high
+tags: [path, traversal]
+owasp: A01:2021 — Broken Access Control
+cwe: CWE-22
+detector: path_traversal

@@ -1,0 +1,7 @@
+id: FLAW007
+title: Redirect to user-supplied URL without allowlist
+severity: medium
+tags: [redirect, phishing]
+owasp: A01:2021 — Broken Access Control
+cwe: CWE-601
+detector: open_redirect

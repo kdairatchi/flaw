@@ -1,0 +1,38 @@
+name: flaw
+description: Static analysis for Crystal code — find security flaws before they ship.
+author: kdairatchi
+branding:
+  icon: shield
+  color: purple
+
+inputs:
+  args:
+    description: Arguments passed to the flaw CLI.
+    required: false
+    default: "scan . --fail-on high"
+  version:
+    description: Version of flaw to install (git ref).
+    required: false
+    default: "main"
+
+runs:
+  using: composite
+  steps:
+    - name: Install Crystal
+      uses: crystal-lang/install-crystal@v1
+
+    - name: Build flaw
+      shell: bash
+      run: |
+        tmp="$(mktemp -d)"
+        git clone --depth 1 --branch "${{ inputs.version }}" https://github.com/kdairatchi/flaw "$tmp"
+        cd "$tmp"
+        shards install
+        shards build --release --no-debug --production
+        mkdir -p "$HOME/.local/bin"
+        cp bin/flaw "$HOME/.local/bin/flaw"
+        echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+    - name: Run flaw
+      shell: bash
+      run: flaw ${{ inputs.args }}
