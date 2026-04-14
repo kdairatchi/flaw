@@ -1,0 +1,7 @@
+id: FLAW122
+title: Server-side template injection
+severity: high
+tags: [security]
+owasp: "A03:2021"
+cwe: CWE-94
+detector: ssti

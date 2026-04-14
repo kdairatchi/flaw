@@ -1,0 +1,7 @@
+id: FLAW125
+title: TOCTOU race
+severity: medium
+tags: [security]
+owasp: "A01:2021"
+cwe: CWE-367
+detector: toctou_race

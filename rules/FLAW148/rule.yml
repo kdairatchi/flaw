@@ -1,0 +1,7 @@
+id: FLAW148
+title: Source map shipped in production artifact
+severity: medium
+tags: [security]
+owasp: "A05:2021"
+cwe: CWE-540
+detector: source_map_shipped

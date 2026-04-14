@@ -1,0 +1,7 @@
+id: FLAW157
+title: AI-tool project config committed to repo
+severity: medium
+tags: [security]
+owasp: "A06:2021"
+cwe: CWE-1357
+detector: dotclaude_in_repo

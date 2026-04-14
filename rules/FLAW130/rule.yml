@@ -1,0 +1,7 @@
+id: FLAW130
+title: Hardcoded font-family outside token file
+severity: low
+tags: [design]
+owasp: ~
+cwe: CWE-1078
+detector: font_family_drift

@@ -1,0 +1,7 @@
+id: FLAW155
+title: User-controlled LLM max_tokens without clamp
+severity: medium
+tags: [security]
+owasp: "A04:2021"
+cwe: CWE-770
+detector: user_controlled_max_tokens

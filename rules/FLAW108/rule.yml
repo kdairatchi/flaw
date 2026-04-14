@@ -1,0 +1,7 @@
+id: FLAW108
+title: AI slop marker in source
+severity: low
+tags: [ai-slop]
+owasp: ~
+cwe: CWE-1164
+detector: ai_slop_markers

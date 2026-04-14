@@ -1,0 +1,7 @@
+id: FLAW113
+title: DOM XSS sink
+severity: high
+tags: [security]
+owasp: "A03:2021"
+cwe: CWE-79
+detector: dom_xss_sink

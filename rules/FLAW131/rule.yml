@@ -1,0 +1,7 @@
+id: FLAW131
+title: FLAW131
+severity: low
+tags: [a11y]
+owasp: ~
+cwe: CWE-1390
+detector: autocomplete_off

@@ -1,0 +1,7 @@
+id: FLAW126
+title: Shell execution with interpolation
+severity: high
+tags: [security]
+owasp: "A03:2021"
+cwe: CWE-78
+detector: shell_exec

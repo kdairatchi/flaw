@@ -1,0 +1,7 @@
+id: FLAW154
+title: Prefix check without canonicalization
+severity: high
+tags: [security]
+owasp: "A01:2021"
+cwe: CWE-23
+detector: path_prefix_check

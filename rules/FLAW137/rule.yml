@@ -1,0 +1,7 @@
+id: FLAW137
+title: Possible provider token
+severity: high
+tags: [security]
+owasp: "A07:2021"
+cwe: CWE-798
+detector: extended_secrets

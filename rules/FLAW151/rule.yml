@@ -1,0 +1,7 @@
+id: FLAW151
+title: User input interpolated into system/assistant role
+severity: high
+tags: [security]
+owasp: "A03:2021"
+cwe: CWE-1039
+detector: prompt_role_injection

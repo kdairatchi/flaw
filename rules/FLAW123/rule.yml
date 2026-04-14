@@ -1,0 +1,7 @@
+id: FLAW123
+title: Prototype pollution sink
+severity: high
+tags: [security]
+owasp: "A08:2021"
+cwe: CWE-1321
+detector: prototype_pollution

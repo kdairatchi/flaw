@@ -1,0 +1,7 @@
+id: FLAW107
+title: Hardcoded external URL or IP in source
+severity: low
+tags: [hygiene]
+owasp: ~
+cwe: CWE-1188
+detector: hardcoded_url

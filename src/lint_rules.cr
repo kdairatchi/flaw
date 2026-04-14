@@ -6,8 +6,19 @@ module Flaw
   # documented in rules/README.md. Intended to be the gatekeeper for
   # community rule contributions.
   module LintRules
-    REQUIRED_FILES = %w[rule.yml bad.cr good.cr README.md]
-    REQUIRED_KEYS  = %w[id title severity tags detector]
+    REQUIRED_FILES  = %w[rule.yml README.md]
+    REQUIRED_FIXTURES = %w[bad good]
+    FIXTURE_EXTS    = %w[.cr .py .js .jsx .ts .tsx .go .rs .java .kt .swift .php .rb .ex .exs .c .cpp .h .hpp .cs .scala .sh .ps1 .yml .yaml .json .tf .hcl .html .css .scss .sass .less .vue .svelte .astro .mjs .cjs .dockerfile]
+    REQUIRED_KEYS   = %w[id title severity tags detector]
+
+    def self.find_fixture(dir_path : String, name : String) : String?
+      FIXTURE_EXTS.each do |ext|
+        p = File.join(dir_path, "#{name}#{ext}")
+        return p if File.exists?(p)
+      end
+      # Also match dotfile-style names like `.mcp.json` or `.claude/settings.json`.
+      Dir.glob(File.join(dir_path, "#{name}.*")).first?
+    end
 
     record Issue, rule : String, level : Symbol, message : String
 
@@ -40,32 +51,35 @@ module Flaw
           end
         end
 
+        REQUIRED_FIXTURES.each do |name|
+          unless find_fixture(path, name)
+            issues << Issue.new(dir, :warn, "missing #{name}.<ext> fixture")
+          end
+        end
+
         yml_path = File.join(path, "rule.yml")
         if File.exists?(yml_path)
           check_rule_yml(dir, yml_path, all_rules, issues)
         end
 
-        bad_path = File.join(path, "bad.cr")
-        good_path = File.join(path, "good.cr")
         rule = all_rules[dir]?
-        if rule && File.exists?(bad_path)
+        if rule && (bad_path = find_fixture(path, "bad"))
           findings = Scanner.new([rule], Config.new([] of String)).scan(bad_path)
           if findings.none? { |f| f.rule_id == dir }
-            issues << Issue.new(dir, :error, "bad.cr does not fire #{dir}")
+            issues << Issue.new(dir, :error, "bad fixture does not fire #{dir}")
           end
         end
-        if rule && File.exists?(good_path)
+        if rule && (good_path = find_fixture(path, "good"))
           findings = Scanner.new([rule], Config.new([] of String)).scan(good_path)
           if findings.any? { |f| f.rule_id == dir }
-            issues << Issue.new(dir, :error, "good.cr falsely fires #{dir}")
+            issues << Issue.new(dir, :error, "good fixture falsely fires #{dir}")
           end
         end
 
-        fp_path = File.join(path, "fp.cr")
-        if rule && File.exists?(fp_path)
+        if rule && (fp_path = find_fixture(path, "fp"))
           findings = Scanner.new([rule], Config.new([] of String)).scan(fp_path)
           if findings.any? { |f| f.rule_id == dir }
-            issues << Issue.new(dir, :error, "fp.cr falsely fires #{dir} — tighten the detector")
+            issues << Issue.new(dir, :error, "fp fixture falsely fires #{dir} — tighten the detector")
           end
         end
 

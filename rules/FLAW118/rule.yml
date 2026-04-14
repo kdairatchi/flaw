@@ -1,0 +1,7 @@
+id: FLAW118
+title: <img> without alt attribute
+severity: low
+tags: [a11y]
+owasp: ~
+cwe: CWE-1390
+detector: missing_alt

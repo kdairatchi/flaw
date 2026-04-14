@@ -1,0 +1,7 @@
+id: FLAW106
+title: Raw color literal outside token file
+severity: low
+tags: [design]
+owasp: ~
+cwe: CWE-1078
+detector: color_drift

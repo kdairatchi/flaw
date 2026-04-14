@@ -1,0 +1,7 @@
+id: FLAW120
+title: Positive tabindex breaks tab order
+severity: low
+tags: [a11y]
+owasp: ~
+cwe: CWE-1390
+detector: positive_tabindex

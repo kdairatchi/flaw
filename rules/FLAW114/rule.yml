@@ -1,0 +1,7 @@
+id: FLAW114
+title: Insecure http:// download
+severity: medium
+tags: [security]
+owasp: "A08:2021"
+cwe: CWE-494
+detector: insecure_download

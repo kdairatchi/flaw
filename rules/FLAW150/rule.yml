@@ -1,0 +1,7 @@
+id: FLAW150
+title: Project-local config grants execution
+severity: high
+tags: [security]
+owasp: "A01:2021"
+cwe: CWE-732
+detector: config_grants_exec

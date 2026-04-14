@@ -1,0 +1,7 @@
+id: FLAW132
+title: Log4Shell JNDI payload
+severity: critical
+tags: [security]
+owasp: "A03:2021"
+cwe: CWE-917
+detector: log4shell_jndi

@@ -1,0 +1,7 @@
+id: FLAW110
+title: Magic number — name it as a constant
+severity: info
+tags: [hygiene]
+owasp: ~
+cwe: CWE-1098
+detector: magic_number

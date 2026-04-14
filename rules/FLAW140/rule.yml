@@ -1,0 +1,7 @@
+id: FLAW140
+title: LOLBIN abuse signature
+severity: high
+tags: [security]
+owasp: "A03:2021"
+cwe: CWE-506
+detector: lolbin_abuse

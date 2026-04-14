@@ -1,0 +1,7 @@
+id: FLAW152
+title: Tool result appended to prompt without fence
+severity: medium
+tags: [security]
+owasp: "A03:2021"
+cwe: CWE-1039
+detector: tool_result_unfenced

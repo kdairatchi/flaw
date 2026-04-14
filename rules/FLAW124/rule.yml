@@ -1,0 +1,7 @@
+id: FLAW124
+title: Log injection
+severity: low
+tags: [security]
+owasp: "A09:2021"
+cwe: CWE-117
+detector: log_injection

@@ -1,0 +1,7 @@
+id: FLAW128
+title: Click handler on non-interactive element
+severity: low
+tags: [a11y]
+owasp: ~
+cwe: CWE-1390
+detector: click_non_interactive

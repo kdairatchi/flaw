@@ -1,0 +1,7 @@
+id: FLAW141
+title: Large base64 blob
+severity: medium
+tags: [security]
+owasp: ~
+cwe: CWE-506
+detector: base64_blob

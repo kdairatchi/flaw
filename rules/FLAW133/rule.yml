@@ -1,0 +1,7 @@
+id: FLAW133
+title: NoSQL injection sink
+severity: high
+tags: [security]
+owasp: "A03:2021"
+cwe: CWE-943
+detector: nosql_injection

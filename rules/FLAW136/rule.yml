@@ -1,0 +1,7 @@
+id: FLAW136
+title: Cloud metadata endpoint
+severity: medium
+tags: [security]
+owasp: "A10:2021"
+cwe: CWE-918
+detector: cloud_metadata_ref

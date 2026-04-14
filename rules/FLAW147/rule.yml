@@ -1,0 +1,7 @@
+id: FLAW147
+title: Security group 0.0.0.0/0 ingress
+severity: high
+tags: [security]
+owasp: "A01:2021"
+cwe: CWE-284
+detector: tf_wide_ingress

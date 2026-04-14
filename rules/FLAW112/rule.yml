@@ -1,0 +1,7 @@
+id: FLAW112
+title: Dynamic code execution sink
+severity: high
+tags: [security]
+owasp: "A03:2021"
+cwe: CWE-94
+detector: dangerous_eval

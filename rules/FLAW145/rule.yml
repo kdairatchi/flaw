@@ -1,0 +1,7 @@
+id: FLAW145
+title: Unsafe github.event expression in workflow
+severity: high
+tags: [security]
+owasp: "A03:2021"
+cwe: CWE-78
+detector: workflow_script_injection

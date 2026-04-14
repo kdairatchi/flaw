@@ -1,0 +1,7 @@
+id: FLAW149
+title: Unpinned MCP/agent source
+severity: high
+tags: [security]
+owasp: "A06:2021"
+cwe: CWE-1357
+detector: unpinned_mcp_source

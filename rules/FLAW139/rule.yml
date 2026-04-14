@@ -1,0 +1,7 @@
+id: FLAW139
+title: Remote script piped to shell
+severity: high
+tags: [security]
+owasp: "A08:2021"
+cwe: CWE-494
+detector: curl_pipe_shell

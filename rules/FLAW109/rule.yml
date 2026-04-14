@@ -1,0 +1,7 @@
+id: FLAW109
+title: Low color contrast (WCAG AA fail)
+severity: low
+tags: [design]
+owasp: ~
+cwe: CWE-1164
+detector: contrast_fail

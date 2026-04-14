@@ -1,0 +1,7 @@
+id: FLAW117
+title: target=\
+severity: low
+tags: [security]
+owasp: "A05:2021"
+cwe: CWE-1022
+detector: unsafe_target_blank

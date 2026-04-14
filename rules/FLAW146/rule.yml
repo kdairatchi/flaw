@@ -1,0 +1,7 @@
+id: FLAW146
+title: Kubernetes security boundary disabled
+severity: high
+tags: [security]
+owasp: "A01:2021"
+cwe: CWE-250
+detector: k8s_privileged

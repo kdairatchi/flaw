@@ -1,0 +1,7 @@
+id: FLAW143
+title: Docker socket mounted into container
+severity: high
+tags: [security]
+owasp: "A01:2021"
+cwe: CWE-250
+detector: docker_socket_mount

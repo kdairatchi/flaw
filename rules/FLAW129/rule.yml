@@ -1,0 +1,7 @@
+id: FLAW129
+title: Inline event handler attribute
+severity: low
+tags: [security]
+owasp: "A03:2021"
+cwe: CWE-79
+detector: inline_event_handler

@@ -1,0 +1,7 @@
+id: FLAW135
+title: PII in log
+severity: medium
+tags: [security]
+owasp: "A09:2021"
+cwe: CWE-532
+detector: pii_in_log

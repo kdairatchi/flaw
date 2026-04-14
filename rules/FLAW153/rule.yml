@@ -1,0 +1,7 @@
+id: FLAW153
+title: Model output rendered with images enabled
+severity: medium
+tags: [security]
+owasp: "A03:2021"
+cwe: CWE-79
+detector: markdown_image_from_model

@@ -1,0 +1,7 @@
+id: FLAW134
+title: Debug enabled in config
+severity: medium
+tags: [security]
+owasp: "A05:2021"
+cwe: CWE-489
+detector: debug_enabled_prod

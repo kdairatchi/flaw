@@ -1,0 +1,7 @@
+id: FLAW119
+title: Overuse of !important in stylesheet
+severity: info
+tags: [design]
+owasp: ~
+cwe: CWE-1078
+detector: important_overuse

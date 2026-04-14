@@ -1,0 +1,7 @@
+id: FLAW111
+title: Mixed CSS units within property family
+severity: low
+tags: [design]
+owasp: ~
+cwe: CWE-1078
+detector: unit_drift

@@ -1,0 +1,7 @@
+id: FLAW127
+title: <html> without lang attribute
+severity: low
+tags: [a11y]
+owasp: ~
+cwe: CWE-1390
+detector: html_no_lang

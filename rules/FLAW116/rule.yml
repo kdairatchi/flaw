@@ -1,0 +1,7 @@
+id: FLAW116
+title: Unsafe deserialization sink
+severity: high
+tags: [security]
+owasp: "A08:2021"
+cwe: CWE-502
+detector: unsafe_deserialize_pickle

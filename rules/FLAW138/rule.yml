@@ -1,0 +1,7 @@
+id: FLAW138
+title: PowerShell encoded/hidden command
+severity: high
+tags: [security]
+owasp: "A03:2021"
+cwe: CWE-506
+detector: powershell_encoded

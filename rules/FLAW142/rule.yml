@@ -1,0 +1,7 @@
+id: FLAW142
+title: Obfuscated code execution chain
+severity: high
+tags: [security]
+owasp: "A03:2021"
+cwe: CWE-506
+detector: obfuscated_invoke

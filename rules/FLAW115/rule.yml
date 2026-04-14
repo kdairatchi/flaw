@@ -1,0 +1,7 @@
+id: FLAW115
+title: Permissive file mode
+severity: medium
+tags: [security]
+owasp: "A01:2021"
+cwe: CWE-732
+detector: permissive_chmod

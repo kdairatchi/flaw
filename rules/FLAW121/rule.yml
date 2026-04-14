@@ -1,0 +1,7 @@
+id: FLAW121
+title: Conflicting Tailwind utilities on same element
+severity: low
+tags: [design]
+owasp: ~
+cwe: CWE-1078
+detector: tailwind_conflict
