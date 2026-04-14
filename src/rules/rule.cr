@@ -52,6 +52,16 @@ module Flaw
       "FLAW109" => {cwe: "CWE-1164", owasp: nil},
       "FLAW110" => {cwe: "CWE-1098", owasp: nil},
       "FLAW111" => {cwe: "CWE-1078", owasp: nil},
+      "FLAW112" => {cwe: "CWE-94", owasp: "A03:2021"},
+      "FLAW113" => {cwe: "CWE-79", owasp: "A03:2021"},
+      "FLAW114" => {cwe: "CWE-494", owasp: "A08:2021"},
+      "FLAW115" => {cwe: "CWE-732", owasp: "A01:2021"},
+      "FLAW116" => {cwe: "CWE-502", owasp: "A08:2021"},
+      "FLAW117" => {cwe: "CWE-1022", owasp: "A05:2021"},
+      "FLAW118" => {cwe: "CWE-1390", owasp: nil},
+      "FLAW119" => {cwe: "CWE-1078", owasp: nil},
+      "FLAW120" => {cwe: "CWE-1390", owasp: nil},
+      "FLAW121" => {cwe: "CWE-1078", owasp: nil},
     }
 
     def cwe : String?
