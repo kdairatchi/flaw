@@ -49,6 +49,7 @@ module Flaw
       return [] of Finding if ALLOW_PATH.match(path)
       return [] of Finding if RuleContext.doc_path?(path)
       return [] of Finding if RuleContext.lock_path?(path)
+      return [] of Finding if RuleContext.test_path?(path)
       results = [] of Finding
       source.each_line.with_index(1) do |line, idx|
         next if RuleContext.comment_only?(line)
