@@ -1,4 +1,5 @@
 require "./rule"
+require "./context"
 
 module Flaw
   # FLAW102 — placeholder secrets/URLs never replaced with real values.
@@ -41,10 +42,19 @@ module Flaw
       /"(example\.com\/api|localhost:\d+\/REPLACE)"/i,
     ]
 
+    # .env.example and sample configs are *supposed* to contain placeholders.
+    ALLOW_PATH = %r{(\.env\.example|\.env\.sample|\.env\.template|/examples?/|/samples?/|/templates?/|README|CHANGELOG)}i
+
     def check(source : String, path : String) : Array(Finding)
+      return [] of Finding if ALLOW_PATH.match(path)
+      return [] of Finding if RuleContext.doc_path?(path)
+      return [] of Finding if RuleContext.lock_path?(path)
       results = [] of Finding
       source.each_line.with_index(1) do |line, idx|
-        next if line.lstrip.starts_with?('#')
+        next if RuleContext.comment_only?(line)
+        # ignore lines that are *declaring* a constant of placeholders
+        # (rule patterns, test data generators).
+        next if line =~ /PATTERNS?\s*=|FIXTURES?\s*=|EXAMPLE_/
         PATTERNS.each do |re|
           if m = line.match(re)
             results << finding(source, path, idx, m.begin(0) || 0,

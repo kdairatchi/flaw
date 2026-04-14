@@ -1,4 +1,5 @@
 require "./rule"
+require "./context"
 
 module Flaw
   # FLAW101 — AI refusal/assistant phrases leaked into source.
@@ -41,9 +42,20 @@ module Flaw
       /\bI'm (just|only) an? (AI|language model)\b/i,
     ]
 
+    # Paths that are allowed to contain these phrases as test fixtures or
+    # prompt material.
+    ALLOW_PATH = %r{/(prompts?|fixtures?|spec|tests?|examples?|corpus|eval)s?/}i
+
     def check(source : String, path : String) : Array(Finding)
+      return [] of Finding if ALLOW_PATH.match(path)
+      return [] of Finding if path.ends_with?(".jsonl") || path.ends_with?(".txt")
+      lenient = RuleContext.doc_path?(path)
       results = [] of Finding
       source.each_line.with_index(1) do |line, idx|
+        # Only fire when the phrase is inside a string literal or a comment —
+        # never on plain prose in Markdown headers/body (which legitimately
+        # contains "I cannot" etc.).
+        next if lenient && !(line =~ /[#"']|\/\//)
         PATTERNS.each do |re|
           if m = line.match(re)
             results << finding(source, path, idx, m.begin(0) || 0,

@@ -1,4 +1,5 @@
 require "./rule"
+require "./context"
 
 module Flaw
   class HardcodedSecret < Rule
@@ -23,33 +24,45 @@ module Flaw
     end
 
     PATTERNS = {
-      "AWS access key"    => /\bAKIA[0-9A-Z]{16}\b/,
-      "GitHub token"      => /\bghp_[A-Za-z0-9]{36,}\b/,
+      "AWS access key"            => /\bAKIA[0-9A-Z]{16}\b/,
+      "GitHub token"              => /\bghp_[A-Za-z0-9]{36,}\b/,
       "GitHub fine-grained token" => /\bgithub_pat_[A-Za-z0-9_]{22,}\b/,
-      "Slack token"       => /\bxox[abpsr]-[A-Za-z0-9-]{10,}\b/,
-      "Google API key"    => /\bAIza[0-9A-Za-z\-_]{35}\b/,
-      "Private key"       => /-----BEGIN (RSA |EC |OPENSSH |DSA |PGP )?PRIVATE KEY-----/,
-      "Stripe live key"   => /\bsk_live_[0-9a-zA-Z]{24,}\b/,
+      "Slack token"               => /\bxox[abpsr]-[A-Za-z0-9-]{10,}\b/,
+      "Google API key"            => /\bAIza[0-9A-Za-z\-_]{35}\b/,
+      "Private key"               => /-----BEGIN (RSA |EC |OPENSSH |DSA |PGP )?PRIVATE KEY-----/,
+      "Stripe live key"           => /\bsk_live_[0-9a-zA-Z]{24,}\b/,
     }
 
-    NAMED_ASSIGN = /\b(api[_-]?key|secret|token|password|passwd|pwd|auth)\s*=\s*"([^"]{16,})"/i
+    NAMED_ASSIGN  = /\b(api[_-]?key|secret|token|password|passwd|pwd|auth)\s*[:=]\s*"([^"]{16,})"/i
+    BENIGN_VALUE  = /\A(your[_\- ]?|example|placeholder|xxx+|changeme|todo|fake|dummy|sample|test[_\- ]|demo[_\- ]|\$\{|\{\{|<%|process\.env|ENV\[)/i
+    ENV_LOOKUP    = /\b(ENV\[|process\.env|os\.getenv|getenv\()/
+    GENERIC_WORDS = Set{"password", "username", "default", "anonymous", "changeme"}
 
     def check(source : String, path : String) : Array(Finding)
+      return [] of Finding if RuleContext.lock_path?(path)
+      lenient = RuleContext.test_path?(path) || RuleContext.doc_path?(path)
       results = [] of Finding
       source.each_line.with_index(1) do |line, idx|
-        next if line.lstrip.starts_with?('#')
+        next if RuleContext.comment_only?(line)
         PATTERNS.each do |label, re|
           if m = line.match(re)
+            # Allow deliberately-fake examples in docs/tests only if the
+            # token itself looks templated.
+            next if lenient && line =~ /EXAMPLE|FAKE|DUMMY|PLACEHOLDER/i
             results << finding(source, path, idx, m.begin(0) || 0,
               "Possible #{label} committed to source")
           end
         end
+        next if lenient
         if m = line.match(NAMED_ASSIGN)
           value = m[2]
-          # skip obvious placeholders
-          next if value =~ /^(your[_-]?|example|placeholder|xxx+|changeme|todo)/i
+          next if value =~ BENIGN_VALUE
+          next if line =~ ENV_LOOKUP
+          next if GENERIC_WORDS.includes?(value.downcase)
           next if value.chars.uniq.size < 6
           next if Entropy.shannon(value) < 3.5
+          # Skip URL-looking values — covered by hardcoded_url rule.
+          next if value =~ %r{\A[a-z]+://}
           results << finding(source, path, idx, m.begin(0) || 0,
             "Hardcoded secret assigned to '#{m[1]}' — move to ENV or config file")
         end
