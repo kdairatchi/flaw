@@ -43,7 +43,7 @@ module Flaw
       lines = source.lines
       lines.each_with_index do |line, i|
         next if RuleContext.comment_only?(line)
-        next unless line =~ TOOL_ROLE_RX
+        next unless role_m = line.match(TOOL_ROLE_RX)
         window_start = Math.max(0, i - 3)
         window_end = Math.min(lines.size - 1, i + 3)
         window = lines[window_start..window_end].join('\n')
@@ -51,7 +51,6 @@ module Flaw
         if m = window.match(BARE_CONTENT_RX)
           ident = m[1]
           next if ident =~ /\A(True|False|None|null|undefined)\z/
-          role_m = line.match(TOOL_ROLE_RX).not_nil!
           results << finding(source, path, i + 1, role_m.begin(0) || 0,
             "tool role carries bare '#{ident}' — fence or sanitize before append")
         end

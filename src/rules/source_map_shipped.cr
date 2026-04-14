@@ -33,7 +33,7 @@ module Flaw
       DESC
     end
 
-    ARTIFACT_PATH_RX = %r{(?:^|/)(?:dist|build|out|lib|public|_next|.next|.nuxt|.output)/}i
+    ARTIFACT_PATH_RX = %r{(?:^|/)(?:dist|build|out|lib|public|_next|\.next|\.nuxt|\.output)/}i
     SOURCEMAP_RX     = %r{//[#@]\s*sourceMappingURL\s*=}
     PKG_FILES_MAP_RX = /"[^"]*\.map"/
 

@@ -34,7 +34,11 @@ module Flaw
     end
 
     DECORATOR_RX = /@(tool|mcp\.tool|function_tool|ai_function|registerTool|server\.tool)\b/
-    PATH_HINT_RX = %r{(?:^|/)(?:tools?|mcp|agents?|handlers?)/}i
+    PATH_HINT_RX = %r{(?:^|/)(?:tools?|mcp|agents?|handlers?|routes?|api|skills?|plugins?)/}i
+    # A new top-level definition ends the "we're inside the tool function"
+    # window. Matches Python `def`/`async def`, JS/TS `function`/`const …= `,
+    # Go `func`, Rust `fn`, Ruby `def` at column 0 — no indent.
+    NEW_DEF_RX = /\A(?:def\s|async\s+def\s|function\s|const\s|let\s|var\s|func\s|fn\s|class\s)/
 
     HTTP_CALLS = [
       /\brequests\.(get|post|put|patch|delete|head|request)\s*\(\s*([^)]+)/,
@@ -51,15 +55,21 @@ module Flaw
       in_tool_path = !!PATH_HINT_RX.match(path)
       results = [] of Finding
       lines = source.lines
-      decorator_pending = false
+      # State machine: :idle → (@decorator) → :pending → (def foo) → :in_handler
+      # → (new def) → :idle. A file whose path matches PATH_HINT_RX stays
+      # effectively :in_handler everywhere.
+      state = :idle
       lines.each_with_index do |line, i|
         if line =~ DECORATOR_RX
-          decorator_pending = true
+          state = :pending
           next
         end
-        in_tool_fn = in_tool_path || decorator_pending
+        if line =~ NEW_DEF_RX
+          state = (state == :pending ? :in_handler : :idle)
+          next
+        end
         next if RuleContext.comment_only?(line)
-        # reset pending after non-blank non-comment-non-decorator line
+        in_tool_fn = in_tool_path || state == :in_handler || state == :pending
         HTTP_CALLS.each do |rx|
           next unless m = line.match(rx)
           args = m[-1]
@@ -70,7 +80,6 @@ module Flaw
             "Tool handler outbound call with non-literal URL — potential exfil")
           break
         end
-        decorator_pending = false if line.strip != "" && line !~ DECORATOR_RX
       end
       results
     end

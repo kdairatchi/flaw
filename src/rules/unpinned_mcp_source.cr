@@ -34,25 +34,22 @@ module Flaw
 
     CONFIG_NAME_RX = %r{(?:^|/)(?:\.mcp\.json|mcp\.json|claude_desktop_config\.json|mcp\.ya?ml|\.cursor/mcp\.json)$}i
     HTTP_RX        = %r{"(http://[^"]+)"}
-    NPX_UNPINNED   = /"npx"[^\]]*?"([A-Za-z0-9@._\/\-]+)"/
     GIT_UNPINNED   = %r{"(git\+https?://[^"#]+)(?:#([A-Fa-f0-9]{0,39}))?"}
     SHELL_CMD_RX   = /"command"\s*:\s*"(bash|sh|zsh|cmd|powershell)"/
+    NPX_COMMAND_RX = /"command"\s*:\s*"npx"/
+    # Match a package identifier — scoped (@scope/name) or plain, optionally
+    # with a version tail (@1.2.3). We flag when no version tail exists.
+    NPX_ARG_RX = /"(@?[A-Za-z0-9][\w\/\-\.]*?)(?:@([\w\.\-]+))?"/
 
     def check(source : String, path : String) : Array(Finding)
       return [] of Finding unless CONFIG_NAME_RX.match(path)
       results = [] of Finding
+      npx_context = false
       source.each_line.with_index(1) do |line, idx|
         next if RuleContext.comment_only?(line)
         if m = line.match(HTTP_RX)
           results << finding(source, path, idx, m.begin(0) || 0,
             "Plain http:// MCP endpoint '#{m[1]}' — use https and pin")
-        end
-        if m = line.match(NPX_UNPINNED)
-          pkg = m[1]
-          unless pkg.includes?("@") && pkg.rindex('@').not_nil! > 0
-            results << finding(source, path, idx, m.begin(0) || 0,
-              "npx package '#{pkg}' without @version — pin exact version")
-          end
         end
         if m = line.match(GIT_UNPINNED)
           sha = m[2]?
@@ -64,6 +61,25 @@ module Flaw
         if m = line.match(SHELL_CMD_RX)
           results << finding(source, path, idx, m.begin(0) || 0,
             "Raw shell ('#{m[1]}') as MCP command — wrap in a signed binary")
+        end
+        # Multi-line pattern: "command": "npx" on one line, then the "args"
+        # list with the package name on the next 1–5 lines. Sticky flag
+        # flips on the command key and stays until we see a plausible
+        # package-name string literal (or 5 lines pass).
+        if line =~ NPX_COMMAND_RX
+          npx_context = true
+          next
+        end
+        if npx_context && (m = line.match(NPX_ARG_RX))
+          pkg = m[1]
+          # Skip non-package string values — flag words like "args", "env".
+          unless pkg =~ /\A(args|env|command|type|url|cwd)\z/
+            unless m[2]?
+              results << finding(source, path, idx, m.begin(0) || 0,
+                "npx package '#{pkg}' without @version — pin exact version")
+            end
+            npx_context = false
+          end
         end
       end
       results

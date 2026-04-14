@@ -34,7 +34,7 @@ module Flaw
     end
 
     WORKFLOW_PATH = %r{\.github/workflows/.*\.ya?ml$}
-    DANGEROUS_RX  = /\$\{\{\s*github\.event\.(issue|pull_request|comment|review|discussion|release)\.(title|body|label|head\.(ref|sha))\s*\}\}/
+    DANGEROUS_RX = /\$\{\{\s*github\.(?:event\.(?:issue|pull_request|comment|review|discussion|release|workflow_run)\.(?:title|body|label|head\.(?:ref|sha))|event\.client_payload\.[\w\.]+|head_ref|ref_name)\s*\}\}/
 
     def check(source : String, path : String) : Array(Finding)
       return [] of Finding unless path =~ WORKFLOW_PATH
@@ -43,9 +43,8 @@ module Flaw
       results = [] of Finding
       source.each_line.with_index(1) do |line, idx|
         if m = line.match(DANGEROUS_RX)
-          field = m[2]
           results << finding(source, path, idx, m.begin(0) || 0,
-            "Unsanitized github.event.*.#{field} in workflow — shell injection risk, wrap in env var")
+            "Attacker-controlled `#{m[0]}` in workflow — shell injection risk, wrap in env var")
         end
       end
       results

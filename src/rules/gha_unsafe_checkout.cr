@@ -53,9 +53,8 @@ module Flaw
         if line =~ CHECKOUT_RX
           checkout_line = i + 1
         end
-        if checkout_line > 0 && line =~ UNSAFE_REF_RX
-          col = ($~.begin(0) || 0)
-          results << finding(source, path, i + 1, col,
+        if checkout_line > 0 && (m = line.match(UNSAFE_REF_RX))
+          results << finding(source, path, i + 1, m.begin(0) || 0,
             "pull_request_target + PR-head checkout — attacker PR runs with write-scope token (T1195)")
           checkout_line = 0
         end

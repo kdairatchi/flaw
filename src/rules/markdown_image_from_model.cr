@@ -44,13 +44,12 @@ module Flaw
       lines = source.lines
       lines.each_with_index do |line, i|
         next if RuleContext.comment_only?(line)
-        next unless line =~ RENDER_RX
+        next unless m = line.match(RENDER_RX)
         window_start = Math.max(0, i - 3)
         window_end = Math.min(lines.size - 1, i + 5)
         window = lines[window_start..window_end].join('\n')
         next unless MODEL_SRC_RX.match(window)
         next if SAFE_PROP_RX.match(window)
-        m = line.match(RENDER_RX).not_nil!
         results << finding(source, path, i + 1, m.begin(0) || 0,
           "Model output rendered via '#{m[1]}' without image allowlist")
       end

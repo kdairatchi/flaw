@@ -46,7 +46,7 @@ module Flaw
       lines = source.lines
       lines.each_with_index do |line, i|
         next if RuleContext.comment_only?(line)
-        next unless line =~ ROLE_RX
+        next unless m = line.match(ROLE_RX)
         # widen to the nearest 3 lines, sometimes role: and content: split.
         window_start = Math.max(0, i - 1)
         window_end = Math.min(lines.size - 1, i + 3)
@@ -54,7 +54,6 @@ module Flaw
         has_tmpl = PY_TEMPLATE_RX.match(window) || JS_TEMPLATE_RX.match(window)
         has_req = REQ_IDENT_RX.match(window)
         if has_tmpl && has_req
-          m = line.match(ROLE_RX).not_nil!
           results << finding(source, path, i + 1, m.begin(0) || 0,
             "Request-derived input interpolated into role='#{m[1]}' message")
         end

@@ -35,8 +35,10 @@ module Flaw
     WHERE_LINE = /\$where\s*:/
     FUNC_LINE  = /\$function\s*:/
     FIND_WHERE = /Mongo(?:DB)?\.\w+\.find\s*\(\s*\{[^}]*\$where/
-    DB_OP      = /\bdb\.\w+\.(?:find|update|delete)\s*\(\s*([^{].*?(?:req|params|body))/
-    EVAL_MONGO = /\beval\s*\(.*(?:MongoClient|MongoDB)/
+    # Bounded alternative avoids .*? + char-class backtracking on long lines.
+    DB_OP       = /\bdb\.\w+\.(?:find|update|delete)\s*\(\s*[^{)\n]{0,200}\b(?:req|params|body)\b/
+    EVAL_MONGO  = /\beval\s*\([^)\n]{0,200}(?:MongoClient|MongoDB)/
+    BATCH_RULES = [FIND_WHERE, DB_OP, EVAL_MONGO]
 
     def check(source : String, path : String) : Array(Finding)
       return [] of Finding unless EXT.any? { |e| path.ends_with?(e) }
@@ -54,7 +56,7 @@ module Flaw
             "NoSQL injection sink — $where/$function with user input or unparameterised query")
           next
         end
-        [FIND_WHERE, DB_OP, EVAL_MONGO].each do |rx|
+        BATCH_RULES.each do |rx|
           if m = line.match(rx)
             results << finding(source, path, idx, m.begin(0) || 0,
               "NoSQL injection sink — $where/$function with user input or unparameterised query")
