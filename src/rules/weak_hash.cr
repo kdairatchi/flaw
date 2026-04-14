@@ -1,4 +1,5 @@
 require "./rule"
+require "./context"
 
 module Flaw
   class WeakHash < Rule
@@ -23,15 +24,20 @@ module Flaw
       DESC
     end
 
-    WEAK_CALL  = /\b(Digest::MD5|Digest::SHA1|OpenSSL::Digest\.new\("(?:MD5|SHA1)"\))/
-    SENSITIVE  = /\b(password|passwd|hmac|signature|integrity|hash_password|verify_sig)\b/i
+    WEAK_CALL    = /\b(Digest::MD5|Digest::SHA1|OpenSSL::Digest\.new\("(?:MD5|SHA1)"\))/
+    SENSITIVE    = /\b(password|passwd|hmac|signature|integrity|hash_password|verify_sig)\b/i
+    NON_SECURITY = /#\s*(checksum|fingerprint)|etag|cache_key|content_hash/i
 
     def check(source : String, path : String) : Array(Finding)
+      return [] of Finding unless RuleContext.code_path?(path)
+      return [] of Finding if RuleContext.test_path?(path) || RuleContext.doc_path?(path)
+
       results = [] of Finding
       lines = source.split('\n')
       lines.each_with_index do |line, i|
-        next if line.lstrip.starts_with?('#')
+        next if RuleContext.comment_only?(line)
         next unless m = line.match(WEAK_CALL)
+        next if line =~ NON_SECURITY
         window_start = [i - 2, 0].max
         window_end = [i + 2, lines.size - 1].min
         window = lines[window_start..window_end].join('\n')

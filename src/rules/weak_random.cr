@@ -1,4 +1,5 @@
 require "./rule"
+require "./context"
 
 module Flaw
   class WeakRandom < Rule
@@ -26,18 +27,32 @@ module Flaw
     WEAK_CALL = /\b(rand(?:om)?(?:\.|::)|Random::DEFAULT|Random\.new)/
 
     def check(source : String, path : String) : Array(Finding)
+      return [] of Finding unless RuleContext.code_path?(path)
+      return [] of Finding if RuleContext.test_path?(path) || RuleContext.doc_path?(path)
+
       results = [] of Finding
       lines = source.split('\n')
       lines.each_with_index do |line, i|
-        next if line.lstrip.starts_with?('#')
+        next if RuleContext.comment_only?(line)
         next unless m = line.match(WEAK_CALL)
-        # look 2 lines up and down for sensitive identifier
+        next if line.includes?("Random::Secure")
+
         window_start = [i - 2, 0].max
         window_end = [i + 2, lines.size - 1].min
-        window = lines[window_start..window_end].join('\n')
-        next unless window =~ SENSITIVE
-        # skip Random::Secure
-        next if line.includes?("Random::Secure")
+
+        # Find a sensitive match inside the window and make sure the line it
+        # came from isn't itself just a comment (e.g. "# TODO rotate token").
+        hit = false
+        (window_start..window_end).each do |j|
+          wline = lines[j]
+          next if RuleContext.comment_only?(wline)
+          if wline =~ SENSITIVE
+            hit = true
+            break
+          end
+        end
+        next unless hit
+
         results << finding(source, path, i + 1, m.begin(0) || 0,
           "Weak RNG near security-sensitive identifier — use Random::Secure")
       end
