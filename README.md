@@ -170,6 +170,10 @@ flaw is an open-source project built by one person and improved by many. See [CO
 
 In gemology, a **flaw** is a fracture, inclusion, or imperfection inside a crystal — the thing a trained eye spots by catching the light right. flaw does the same for Crystal code: it holds your program up to the light and shows you the fractures before someone else does.
 
+## Security
+
+Report suspected vulnerabilities privately — see [SECURITY.md](SECURITY.md).
+
 ## License
 
 MIT © [kdairatchi](https://github.com/kdairatchi)
