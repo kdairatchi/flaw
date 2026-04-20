@@ -26,19 +26,19 @@ JSON or SARIF for CI and GitHub Code Scanning.
 <div class="flaw-stats" markdown="0">
   <div class="flaw-stat">
     <span class="num">83</span>
-    <span class="label">rules shipped</span>
+    <span class="flaw-label">rules shipped</span>
   </div>
   <div class="flaw-stat">
     <span class="num">24</span>
-    <span class="label">security · FLAW0xx</span>
+    <span class="flaw-label">security · FLAW0xx</span>
   </div>
   <div class="flaw-stat">
     <span class="num">59</span>
-    <span class="label">hygiene · FLAW1xx</span>
+    <span class="flaw-label">hygiene · FLAW1xx</span>
   </div>
   <div class="flaw-stat">
     <span class="num">1</span>
-    <span class="label">static binary</span>
+    <span class="flaw-label">static binary</span>
   </div>
 </div>
 

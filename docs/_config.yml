@@ -60,7 +60,7 @@ callouts:
     color: red
   note:
     title: Note
-    color: blue
+    color: grey
   tip:
     title: Tip
     color: green
@@ -75,6 +75,13 @@ kramdown:
       line_numbers: false
     block:
       line_numbers: false
+
+defaults:
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: default
 
 plugins:
   - jekyll-remote-theme
