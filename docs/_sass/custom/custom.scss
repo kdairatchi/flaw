@@ -20,11 +20,26 @@ $flaw-rule:      #e2d9c6;
 $flaw-chip-bg:   #efe7d1;
 $flaw-chip-line: #d8caa8;
 
+// Paint the gemstone palette on top of just-the-docs' default light
+// theme by rebinding body/sidebar/link tokens at top level, so every
+// downstream selector picks up the right colors.
 body {
+  background-color: $flaw-paper !important;
+  color: $flaw-ink;
   font-family: $sans-body;
   font-feature-settings: "ss01", "cv11", "cv02";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.side-bar,
+.site-header,
+.main-header {
+  background-color: #efe9dc !important;
+}
+
+a:not(.btn):not(.flaw-chip):not(.nav-list-link) {
+  color: $flaw-teal;
 }
 
 h1, h2, h3, h4, h5, h6,
