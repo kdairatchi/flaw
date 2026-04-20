@@ -2,11 +2,6 @@
   <img alt="flaw hero" src="docs/static/flaw-hero.png" width="640">
 </p>
 
-<div align="center">
-  <img alt="flaw logo" src="docs/static/flaw-wide.svg" width="500px;">
-  <p>A fast static analysis tool for finding security flaws in Crystal code.</p>
-</div>
-
 <p align="center">
 <a href="https://github.com/kdairatchi/flaw/blob/main/CONTRIBUTING.md">
 <img src="https://img.shields.io/badge/CONTRIBUTIONS-WELCOME-000000?style=for-the-badge&labelColor=black"></a>
