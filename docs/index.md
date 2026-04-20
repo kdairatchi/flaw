@@ -8,7 +8,7 @@ permalink: /
 
 <div class="flaw-hero" markdown="0">
   <img class="flaw-hero-art" alt="flaw hero" src="{{ site.baseurl }}/static/flaw-hero.png">
-  <img class="flaw-hero-logo" alt="flaw logo" src="{{ site.baseurl }}/static/flaw-wide.svg">
+  <h1 class="flaw-hero-logo">flaw</h1>
   <p class="flaw-tagline">A fast static analysis tool for finding security flaws in Crystal code.</p>
   <div class="flaw-cta">
     <a href="getting-started">Get started</a>
