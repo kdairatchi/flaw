@@ -60,7 +60,7 @@ callouts:
     color: red
   note:
     title: Note
-    color: grey
+    color: purple
   tip:
     title: Tip
     color: green
