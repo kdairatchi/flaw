@@ -1,0 +1,6 @@
+---
+---
+// Empty override. We don't ship a dark mode, and the theme's default
+// dark stylesheet references grey tokens that aren't exported from
+// the dark color_scheme, which fails the build. Shadowing the file
+// makes Jekyll emit an empty CSS and skip the broken compile.
