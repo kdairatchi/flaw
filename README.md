@@ -1,3 +1,7 @@
+<p align="center">
+  <img alt="flaw hero" src="docs/static/flaw-hero.png" width="640">
+</p>
+
 <div align="center">
   <img alt="flaw logo" src="docs/static/flaw-wide.svg" width="500px;">
   <p>A fast static analysis tool for finding security flaws in Crystal code.</p>
