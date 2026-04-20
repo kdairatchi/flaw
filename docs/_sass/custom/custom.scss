@@ -1,0 +1,358 @@
+// flaw docs polish. Typographic rhythm + component color touch-ups on
+// top of the gemstone palette. Mirrors CronLord's editorial feel but
+// with a cooler, prism-teal accent and a bit more density — this is a
+// rule catalog, not a landing page.
+
+// ---- typography ----
+
+$serif-display: "Fraunces", "IBM Plex Serif", "Iowan Old Style",
+                "Apple Garamond", "Baskerville", Georgia, serif;
+$sans-body:     "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+                Roboto, "Helvetica Neue", Arial, sans-serif;
+$mono:          "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo,
+                Consolas, "Liberation Mono", monospace;
+
+$flaw-teal:      #0f7a6b;
+$flaw-teal-deep: #0a5a4f;
+$flaw-paper:     #f7f4ed;
+$flaw-ink:       #1c1a18;
+$flaw-rule:      #e2d9c6;
+$flaw-chip-bg:   #efe7d1;
+$flaw-chip-line: #d8caa8;
+$flaw-aux-blush: #b98a6a;
+
+body {
+  font-family: $sans-body;
+  font-feature-settings: "ss01", "cv11", "cv02";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6,
+.site-title {
+  font-family: $serif-display;
+  font-feature-settings: "ss01", "ss02";
+  letter-spacing: -0.01em;
+  font-weight: 500;
+}
+
+.site-title {
+  font-size: 1.35rem;
+  color: $flaw-ink !important;
+  padding-top: 1.1rem;
+  padding-bottom: 0.9rem;
+  position: relative;
+
+  &::before {
+    // a small prism tick: two stacked dots in the teal accent
+    content: "";
+    display: inline-block;
+    width: 0.55rem;
+    height: 0.55rem;
+    margin-right: 0.55rem;
+    border-radius: 50%;
+    background: $flaw-teal;
+    transform: translateY(-0.15em);
+    box-shadow: 0 0.8em 0 $flaw-aux-blush;
+  }
+}
+
+h1 { font-size: 2.2rem; }
+h2 { font-size: 1.55rem; margin-top: 2.4rem; }
+h3 { font-size: 1.2rem; margin-top: 1.8rem; }
+
+.site-header {
+  border-bottom: 1px solid $flaw-rule;
+}
+
+.site-nav,
+.side-bar {
+  background: #f3ecd9;
+  border-right: 1px solid $flaw-rule;
+}
+
+code, kbd, pre, samp {
+  font-family: $mono;
+  font-feature-settings: "calt" 0;
+}
+
+// Inline code as a token chip, not a shouting highlight.
+p code, li code, td code, h1 code, h2 code, h3 code {
+  background: $flaw-chip-bg;
+  border: 1px solid $flaw-chip-line;
+  padding: 0.08em 0.38em;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+// Code blocks — printed listing with a teal left rail.
+div.highlighter-rouge, figure.highlight {
+  border: 1px solid $flaw-chip-line;
+  border-left: 3px solid $flaw-teal;
+  border-radius: 6px;
+  background: #fbf7e8;
+  padding: 0.35rem 0.1rem;
+}
+
+// Tables — quiet cream rules, teal header underline, zero chrome.
+table {
+  border-collapse: collapse;
+  border: none;
+
+  th {
+    font-family: $serif-display;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+    border-bottom: 2px solid $flaw-teal;
+    background: transparent;
+  }
+  td {
+    border: none;
+    border-bottom: 1px solid #ede5cf;
+    vertical-align: top;
+  }
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+// Primary buttons and inline nav accents pick up the teal.
+.btn-primary, .btn-outline {
+  background: $flaw-teal;
+  color: $flaw-paper;
+  border: 1px solid $flaw-teal-deep;
+
+  &:hover, &:focus {
+    background: $flaw-teal-deep;
+    color: $flaw-paper;
+  }
+}
+
+// Active sidebar item: teal pill.
+.nav-list .nav-list-item .nav-list-link.active {
+  background: #e4dcc5;
+  color: $flaw-ink;
+  border-left: 3px solid $flaw-teal;
+  padding-left: calc(1rem - 3px);
+  font-weight: 500;
+}
+.nav-list .nav-list-item .nav-list-link:hover {
+  background: #ebe3cc;
+}
+
+// Callouts — left rail + tinted bg, single visual grammar.
+.opaque, blockquote, .highlight, .code-example,
+.note, .warning, .danger, .tip {
+  border-radius: 6px;
+}
+
+blockquote {
+  border-left: 3px solid $flaw-aux-blush;
+  background: #f5ecd6;
+  padding: 0.6rem 1rem;
+  margin-left: 0;
+  color: #4e463b;
+  font-style: normal;
+}
+
+.site-footer {
+  border-top: 1px solid $flaw-rule;
+  color: #6a645a;
+  font-size: 0.85rem;
+}
+
+hr {
+  border: none;
+  border-top: 1px dashed #cdc1a6;
+  margin: 2rem 0;
+}
+
+.search-input-wrap {
+  background: #ffffff;
+  border: 1px solid $flaw-rule;
+  border-radius: 6px;
+}
+
+a {
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 120ms ease;
+
+  &:hover {
+    border-bottom-color: currentColor;
+  }
+}
+
+// ---------------- flaw-specific components ----------------
+
+// Hero band that sits above the fold on index.md
+.flaw-hero {
+  margin: 0.5rem 0 2rem;
+  padding: 2.2rem 2rem 2rem;
+  background:
+    radial-gradient(ellipse 700px 380px at 85% -10%, rgba(15, 122, 107, 0.18), transparent 60%),
+    radial-gradient(ellipse 500px 260px at 15% 110%, rgba(185, 138, 106, 0.22), transparent 60%),
+    linear-gradient(180deg, #fbf7e8 0%, $flaw-paper 100%);
+  border: 1px solid $flaw-rule;
+  border-radius: 14px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 12px 30px -20px rgba(31, 28, 24, 0.25);
+  text-align: center;
+
+  img.flaw-hero-art {
+    max-width: 540px;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px -12px rgba(10, 90, 79, 0.35);
+  }
+
+  img.flaw-hero-logo {
+    display: block;
+    margin: 1.2rem auto 0;
+    max-width: 380px;
+    width: 70%;
+    height: auto;
+  }
+
+  .flaw-tagline {
+    margin-top: 1rem;
+    font-family: $serif-display;
+    font-size: 1.15rem;
+    color: #3a342e;
+    letter-spacing: -0.005em;
+  }
+
+  .flaw-cta {
+    margin-top: 1.5rem;
+    display: inline-flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .flaw-cta a {
+    display: inline-block;
+    padding: 0.55rem 1rem;
+    border-radius: 6px;
+    font-family: $mono;
+    font-size: 0.85rem;
+    border: 1px solid $flaw-teal-deep;
+    background: $flaw-teal;
+    color: $flaw-paper;
+  }
+  .flaw-cta a:hover {
+    background: $flaw-teal-deep;
+    border-bottom-color: transparent;
+    text-decoration: none;
+  }
+  .flaw-cta a.ghost {
+    background: transparent;
+    color: $flaw-teal-deep;
+    border: 1px solid $flaw-chip-line;
+  }
+  .flaw-cta a.ghost:hover {
+    background: $flaw-chip-bg;
+    color: $flaw-teal-deep;
+  }
+}
+
+// Stat cards used on the landing page.
+.flaw-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+.flaw-stat {
+  background: #ffffff;
+  border: 1px solid $flaw-rule;
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  text-align: left;
+
+  .num {
+    display: block;
+    font-family: $serif-display;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: $flaw-teal-deep;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+  .label {
+    display: block;
+    margin-top: 0.25rem;
+    font-family: $mono;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6a645a;
+  }
+}
+
+// Compact rule chip (id badges in catalog tables)
+.flaw-chip {
+  display: inline-block;
+  padding: 0 0.5em;
+  font-family: $mono;
+  font-size: 0.82em;
+  border-radius: 4px;
+  border: 1px solid $flaw-chip-line;
+  background: $flaw-chip-bg;
+  color: $flaw-teal-deep;
+}
+
+// Severity pills
+.sev {
+  display: inline-block;
+  padding: 0 0.55em;
+  border-radius: 4px;
+  font-family: $mono;
+  font-size: 0.78em;
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+  border: 1px solid transparent;
+}
+.sev-critical { background: #f7dad1; color: #8e1d0d; border-color: #e7bfb1; }
+.sev-high     { background: #f7e2c1; color: #8a4d07; border-color: #e6cf9e; }
+.sev-medium   { background: #f4ecc1; color: #766103; border-color: #e4d89a; }
+.sev-low      { background: #d9edd1; color: #2d5e1e; border-color: #b8d7ab; }
+.sev-info     { background: #dbe6ef; color: #234967; border-color: #b4c6d4; }
+
+// Category grid (FLAW1xx summary cards)
+.flaw-cats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+.flaw-cat {
+  background: #ffffff;
+  border: 1px solid $flaw-rule;
+  border-left: 3px solid $flaw-teal;
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+
+  h4 {
+    margin: 0 0 0.2rem;
+    font-family: $serif-display;
+    font-size: 1.05rem;
+    color: $flaw-ink;
+  }
+  .range {
+    display: block;
+    font-family: $mono;
+    font-size: 0.75rem;
+    color: $flaw-teal-deep;
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.02em;
+  }
+  p {
+    margin: 0;
+    font-size: 0.92rem;
+    color: #4c463e;
+  }
+}
+
+// 404 guard
+.dino-wrap { overflow-x: auto; }

@@ -62,3 +62,74 @@ Implement the detector (it auto-registers via `Rule.inherited`), fill in `bad.cr
 | [FLAW103](FLAW103/README.md) | medium   | ai-slop  | Unfinished stub (`raise NotImplementedError`, `# TODO: implement`) |
 | [FLAW104](FLAW104/README.md) | low      | ai-slop  | Broad swallow rescue (`rescue Exception; nil`) |
 | [FLAW105](FLAW105/README.md) | high     | ai-slop  | Commented-out authorization / authentication check |
+| [FLAW108](FLAW108/README.md) | low      | ai-slop  | AI slop marker in source (leftover LLM scaffolding) |
+
+**Design / a11y rules** — token drift and accessibility.
+
+| ID | Severity | Tag | Flaw |
+|---|---|---|---|
+| [FLAW106](FLAW106/README.md) | low      | design   | Raw color literal outside token file |
+| [FLAW109](FLAW109/README.md) | low      | design   | Low color contrast (WCAG AA fail) |
+| [FLAW111](FLAW111/README.md) | low      | design   | Mixed CSS units within one property family |
+| [FLAW118](FLAW118/README.md) | low      | a11y     | `<img>` without `alt` attribute |
+| [FLAW119](FLAW119/README.md) | info     | design   | Overuse of `!important` in stylesheet |
+| [FLAW120](FLAW120/README.md) | low      | a11y     | Positive `tabindex` breaks tab order |
+| [FLAW121](FLAW121/README.md) | low      | design   | Conflicting Tailwind utilities on same element |
+| [FLAW127](FLAW127/README.md) | low      | a11y     | `<html>` without `lang` attribute |
+| [FLAW128](FLAW128/README.md) | low      | a11y     | Click handler on non-interactive element |
+| [FLAW130](FLAW130/README.md) | low      | design   | Hardcoded `font-family` outside token file |
+
+**Security sinks (`FLAW1xx`)** — vulnerabilities found in web/LLM/CI landscapes beyond Crystal.
+
+| ID | Severity | Tag | Flaw |
+|---|---|---|---|
+| [FLAW107](FLAW107/README.md) | low      | hygiene  | Hardcoded external URL or IP in source |
+| [FLAW110](FLAW110/README.md) | info     | hygiene  | Magic number — name it as a constant |
+| [FLAW112](FLAW112/README.md) | high     | security | Dynamic code execution sink (`eval`, `Function()`) |
+| [FLAW113](FLAW113/README.md) | high     | security | DOM XSS sink (`innerHTML`, `document.write`) |
+| [FLAW114](FLAW114/README.md) | medium   | security | Insecure `http://` download |
+| [FLAW115](FLAW115/README.md) | medium   | security | Permissive file mode (`chmod 0777`) |
+| [FLAW116](FLAW116/README.md) | high     | security | Unsafe deserialization sink (cross-language) |
+| [FLAW117](FLAW117/README.md) | low      | security | `target="_blank"` without `rel="noopener"` |
+| [FLAW122](FLAW122/README.md) | high     | security | Server-side template injection |
+| [FLAW123](FLAW123/README.md) | high     | security | Prototype pollution sink |
+| [FLAW124](FLAW124/README.md) | low      | security | Log injection |
+| [FLAW125](FLAW125/README.md) | medium   | security | TOCTOU race condition |
+| [FLAW126](FLAW126/README.md) | high     | security | Shell execution with string interpolation |
+| [FLAW129](FLAW129/README.md) | low      | security | Inline event-handler attribute (`onclick=`) |
+| [FLAW132](FLAW132/README.md) | critical | security | Log4Shell JNDI payload |
+| [FLAW133](FLAW133/README.md) | high     | security | NoSQL injection sink |
+| [FLAW134](FLAW134/README.md) | medium   | security | Debug enabled in production config |
+| [FLAW135](FLAW135/README.md) | medium   | security | PII written to log |
+| [FLAW136](FLAW136/README.md) | medium   | security | Cloud metadata endpoint access |
+| [FLAW137](FLAW137/README.md) | high     | security | Possible provider token literal |
+| [FLAW138](FLAW138/README.md) | high     | security | PowerShell encoded / hidden command |
+| [FLAW139](FLAW139/README.md) | high     | security | Remote script piped to shell (`curl \| bash`) |
+| [FLAW140](FLAW140/README.md) | high     | security | LOLBIN abuse signature |
+| [FLAW141](FLAW141/README.md) | medium   | security | Large base64 blob (opaque payload) |
+| [FLAW142](FLAW142/README.md) | high     | security | Obfuscated code-execution chain |
+| [FLAW143](FLAW143/README.md) | high     | security | Docker socket mounted into container |
+| [FLAW146](FLAW146/README.md) | high     | security | Kubernetes security boundary disabled |
+| [FLAW147](FLAW147/README.md) | high     | security | Security-group `0.0.0.0/0` ingress |
+| [FLAW148](FLAW148/README.md) | medium   | security | Source map shipped in production artifact |
+
+**CI/CD & GitHub Actions** — workflow and supply-chain hazards.
+
+| ID | Severity | Tag | Flaw |
+|---|---|---|---|
+| [FLAW144](FLAW144/README.md) | high     | security | `pull_request_target` + PR-head checkout |
+| [FLAW145](FLAW145/README.md) | high     | security | Unsafe `github.event` expression in workflow |
+
+**LLM / MCP app security (`FLAW149`–`FLAW157`)** — AI-stack footguns.
+
+| ID | Severity | Tag | Flaw |
+|---|---|---|---|
+| [FLAW149](FLAW149/README.md) | high     | security | Unpinned MCP / agent source |
+| [FLAW150](FLAW150/README.md) | high     | security | Project-local config grants execution |
+| [FLAW151](FLAW151/README.md) | high     | security | User input interpolated into system / assistant role |
+| [FLAW152](FLAW152/README.md) | medium   | security | Tool result appended to prompt without fence |
+| [FLAW153](FLAW153/README.md) | medium   | security | Model output rendered with images enabled |
+| [FLAW154](FLAW154/README.md) | high     | security | Prefix check without canonicalization |
+| [FLAW155](FLAW155/README.md) | medium   | security | User-controlled LLM `max_tokens` without clamp |
+| [FLAW156](FLAW156/README.md) | high     | security | Tool handler makes outbound request to non-literal URL |
+| [FLAW157](FLAW157/README.md) | medium   | security | AI-tool project config committed to repo |

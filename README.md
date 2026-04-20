@@ -12,6 +12,7 @@
 </p>
 
 <p align="center">
+  <a href="https://kdairatchi.github.io/flaw/">Docs</a> •
   <a href="#installation">Installation</a> •
   <a href="#quickstart">Quickstart</a> •
   <a href="#github-action">GitHub Action</a> •
@@ -28,10 +29,22 @@ flaw reads your Crystal source and holds it up to the light. Each rule looks for
 <summary><strong>Features</strong></summary>
 
 ### Scanning
-- Five built-in rules covering the common high-impact Crystal footguns
-- Per-rule severity override and path ignore via `.flaw.yml`
-- Fail-on threshold for CI gating (`--fail-on high`)
+- 83 built-in rules across security, AI-slop hygiene, design tokens, and accessibility — see [`rules/`](rules/README.md)
+- Per-rule severity override, path ignore, and tag include/exclude via `.flaw.yml` or CLI flags
+- Incremental scans with `--since <ref>` (only report on files/lines changed since a git ref)
+- Baselines (`flaw baseline` + `--baseline .flaw-baseline.json`) to gate only on new findings
+- `--fix` for safe autofixes (e.g. weak-hash upgrades)
+- `--verify-secrets` to probe provider APIs (AWS, GitHub) on FLAW002 matches
 - Recurses any directory of `.cr` files, skips `lib/` and `spec/` by default
+
+### Commands
+- `scan`  — analyze code and emit findings
+- `browse` — interactive TUI triage (fzf + bat + optional tmux popup)
+- `baseline` — snapshot current findings so future scans ignore them
+- `audit` — scan `shard.lock` for shards with known CVEs
+- `rules` / `lint-rules` — list rules, or validate the `rules/` contract in CI
+- `init config` / `init rule` — scaffold a `.flaw.yml` or a new rule folder
+- `regex` / `doctor` — author rule regexes, diagnose the environment
 
 ### Output
 - Pretty (colored, grouped by file, with snippet)
@@ -69,15 +82,30 @@ Download from the [Releases page](https://github.com/kdairatchi/flaw/releases) �
 ## Quickstart
 
 ```bash
-flaw scan .                              # scan current directory, pretty output
-flaw scan src/ --format json             # JSON for agents / pipelines
+flaw scan .                                      # scan current directory, pretty output
+flaw scan src/ --format json                     # JSON for agents / pipelines
 flaw scan . --format sarif > flaw.sarif
-flaw scan . --fail-on high               # CI: exit 1 if any high+ finding
-flaw rules                               # list built-in rules, grouped by tag
-flaw rules FLAW001                       # show rule detail
-flaw lint-rules                          # validate rules/ directory contract
-flaw init config                         # drop a .flaw.yml config stub
-flaw init rule FLAW011 my-new-rule       # scaffold a new rule folder + detector
+flaw scan . --fail-on high                       # CI: exit 1 if any high+ finding
+flaw scan . --since HEAD~1 --since-lines         # only findings on lines changed since HEAD~1
+flaw scan . --include-tag security               # only run rules tagged 'security'
+flaw scan . --fix                                # apply safe autofixes in place
+flaw scan . --verify-secrets                     # live-probe AWS/GitHub keys from FLAW002
+
+flaw browse src/                                 # interactive TUI triage (fzf + bat)
+flaw browse --tmux popup src/                    # open picker in a tmux popup
+
+flaw baseline                                    # snapshot current findings to .flaw-baseline.json
+flaw scan --baseline .flaw-baseline.json         # suppress baselined findings
+
+flaw audit                                       # scan shard.lock for known CVEs
+flaw doctor                                      # diagnose Crystal version, AST backend, config
+flaw regex test '(?i)secret' input.cr            # interactively tune rule regexes
+
+flaw rules                                       # list built-in rules, grouped by tag
+flaw rules FLAW001                               # show rule detail
+flaw lint-rules                                  # validate rules/ directory contract
+flaw init config                                 # drop a .flaw.yml config stub
+flaw init rule FLAW200 my-new-rule               # scaffold a new rule folder + detector
 ```
 
 ## GitHub Action
@@ -101,32 +129,37 @@ jobs:
 
 ## Rules
 
-### Security (`FLAW0xx`)
+flaw ships **83 rules** split into two ID ranges. Full catalog, severity, tags, CWE, and OWASP mapping live in [`rules/README.md`](rules/README.md).
+
+### Security (`FLAW0xx`) — 24 rules
+
+Real vulnerabilities. Default severity is medium+; designed for `--fail-on high` in CI.
 
 | ID | Severity | Flaw |
 |---|---|---|
 | [`FLAW001`](rules/FLAW001/README.md) | critical | Command built from string interpolation |
 | [`FLAW002`](rules/FLAW002/README.md) | high     | Hardcoded secret literal |
 | [`FLAW003`](rules/FLAW003/README.md) | high     | SQL built via interpolation or concatenation |
-| [`FLAW004`](rules/FLAW004/README.md) | high     | Weak RNG near security-sensitive identifier |
-| [`FLAW005`](rules/FLAW005/README.md) | medium   | YAML parsed from untrusted input |
-| [`FLAW006`](rules/FLAW006/README.md) | high     | File access with user-controlled path |
-| [`FLAW007`](rules/FLAW007/README.md) | medium   | Redirect to user-supplied URL without allowlist |
-| [`FLAW008`](rules/FLAW008/README.md) | high     | Deserialization of untrusted data |
 | [`FLAW009`](rules/FLAW009/README.md) | high     | Weak hash (MD5/SHA1) for password or integrity |
-| [`FLAW010`](rules/FLAW010/README.md) | high     | TLS certificate verification disabled |
+| [`FLAW011`](rules/FLAW011/README.md) | high     | Outbound HTTP to user-controlled URL (SSRF) |
+| [`FLAW014`](rules/FLAW014/README.md) | high     | XML parsed without disabling external entities (XXE) |
+| [`FLAW022`](rules/FLAW022/README.md) | high     | Archive entry extracted without normalization (zip-slip) |
+| [`FLAW023`](rules/FLAW023/README.md) | critical | JWT with `alg:none` or verification disabled |
+| [`FLAW024`](rules/FLAW024/README.md) | high     | CORS wildcard / echoed origin with credentials |
+| …and 15 more | | see [`rules/README.md`](rules/README.md) |
 
-### AI-slop / hygiene (`FLAW1xx`)
+### `FLAW1xx` — hygiene, AI-slop, supply chain, and LLM app rules — 59 rules
 
-Detects unedited LLM paste-through — the smell of vibe-coded Claude/ChatGPT output shipped without review. Novel territory: no other linter looks for these.
+Novel territory: catches vibe-coded AI paste-through, LLM-app footguns (prompt-role injection, unfenced tool results, user-controlled `max_tokens`), MCP/agent supply-chain hazards, and design/a11y token drift. Groups include:
 
-| ID | Severity | Flaw |
+| Group | Range | Examples |
 |---|---|---|
-| [`FLAW100`](rules/FLAW100/README.md) | low      | Explanatory narration comment ("This function does X") |
-| [`FLAW101`](rules/FLAW101/README.md) | medium   | AI assistant boilerplate leaked into source |
-| [`FLAW102`](rules/FLAW102/README.md) | medium   | Placeholder value left in source (`your-api-key-here`, `REPLACE_ME`) |
+| AI-slop hygiene | `FLAW100`–`FLAW108` | narration comments, assistant boilerplate, placeholders, unfinished stubs, silenced rescues, commented-out auth |
+| Design / a11y   | `FLAW106`, `FLAW109`, `FLAW111`, `FLAW118`–`FLAW121`, `FLAW127`–`FLAW131` | raw color literals, contrast fail, mixed CSS units, missing alt/lang, Tailwind conflicts |
+| Security sinks  | `FLAW112`–`FLAW117`, `FLAW122`–`FLAW126`, `FLAW132`–`FLAW148` | dynamic eval, DOM XSS, SSTI, prototype pollution, Log4Shell, NoSQL injection, PII in logs, debug-in-prod, cloud-metadata, LOLBIN, insecure GitHub Actions, open security groups, source maps shipped |
+| LLM / MCP       | `FLAW149`–`FLAW157` | unpinned MCP source, project-local config grants exec, role injection, tool result unfenced, user-controlled `max_tokens`, non-literal tool-handler URLs, AI-tool config committed |
 
-Every rule lives in its own folder under [`rules/`](rules/) with the detector, a vulnerable fixture (`bad.cr`), a fixed version (`good.cr`), metadata (`rule.yml`), and docs. Add one with `flaw init rule FLAW011 my-rule`.
+Every rule lives in its own folder under [`rules/`](rules/) with the detector, a vulnerable fixture (`bad.cr`), a fixed version (`good.cr`), metadata (`rule.yml`), and docs. Add one with `flaw init rule FLAW200 my-rule`.
 
 ## Rule validator
 
@@ -159,7 +192,7 @@ rules:
 - **v0.4** — Baseline file (gate only on new findings)
 - **v0.5** — Custom rule DSL (community rules in YAML)
 - **v0.6** — Cross-file taint tracking (sources → sinks)
-- **v1.0** — Plugin system, hosted rule docs at `flaw.prowlrbot.com`, Caido integration
+- **v1.0** — Plugin system, hosted rule docs at [`flaw.prowlrbot.com`](https://flaw.prowlrbot.com) (landing page lives under [`docs/`](docs/) — enable GitHub Pages with `main` / `/docs`), Caido integration
 
 ## Contributing
 

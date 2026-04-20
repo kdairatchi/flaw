@@ -1,0 +1,89 @@
+title: flaw
+description: >-
+  A fast static analysis tool for finding security flaws in Crystal code.
+  83 rules across security, AI-slop hygiene, LLM-app footguns, CI/CD, design, and a11y.
+url: https://kdairatchi.github.io
+baseurl: /flaw
+repository: kdairatchi/flaw
+
+remote_theme: just-the-docs/just-the-docs
+color_scheme: flaw
+
+search_enabled: true
+search:
+  heading_level: 2
+  previews: 2
+  preview_words_before: 3
+  preview_words_after: 3
+  tokenizer_separator: /[\s\-/]+/
+  rel_url: true
+  button: false
+
+heading_anchors: true
+
+nav_external_links:
+  - title: GitHub
+    url: https://github.com/kdairatchi/flaw
+    hide_icon: false
+  - title: Releases
+    url: https://github.com/kdairatchi/flaw/releases
+  - title: Rule catalog
+    url: https://github.com/kdairatchi/flaw/blob/main/rules/README.md
+  - title: Security policy
+    url: https://github.com/kdairatchi/flaw/blob/main/SECURITY.md
+
+aux_links:
+  Source: https://github.com/kdairatchi/flaw
+
+footer_content: >-
+  flaw is MIT-licensed. Built by
+  <a href="https://github.com/kdairatchi">kdairatchi</a>.
+  Report vulnerabilities privately — see
+  <a href="https://github.com/kdairatchi/flaw/blob/main/SECURITY.md">SECURITY.md</a>.
+
+last_edit_timestamp: true
+last_edit_time_format: "%b %e %Y"
+
+gh_edit_link: true
+gh_edit_link_text: Edit this page on GitHub
+gh_edit_repository: https://github.com/kdairatchi/flaw
+gh_edit_branch: main
+gh_edit_source: docs
+gh_edit_view_mode: tree
+
+callouts:
+  warning:
+    title: Warning
+    color: yellow
+  danger:
+    title: Danger
+    color: red
+  note:
+    title: Note
+    color: blue
+  tip:
+    title: Tip
+    color: green
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: "highlight"
+    span:
+      line_numbers: false
+    block:
+      line_numbers: false
+
+plugins:
+  - jekyll-remote-theme
+  - jekyll-seo-tag
+  - jekyll-include-cache
+
+exclude:
+  - static/*.txt
+  - "*.psd"
+  - Gemfile
+  - Gemfile.lock
+  - vendor

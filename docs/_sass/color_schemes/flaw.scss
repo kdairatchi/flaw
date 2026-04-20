@@ -1,0 +1,31 @@
+// "flaw" — gemstone editorial palette. Soft paper canvas, deep emerald
+// accent, quiet charcoal ink. Echoes the "hold the code up to the light"
+// metaphor: cream paper for reading, prism teal where the eye focuses.
+//
+// just-the-docs loads color_schemes/light first and then this file on
+// top of it, so we only need to override the tokens we want to change.
+
+// ---- paper / canvas ----
+$body-background-color:       #f7f4ed;  // warm parchment
+$sidebar-color:               #efe9dc;  // a shade deeper than canvas
+$search-background-color:     #ffffff;
+$table-background-color:      #ffffff;
+$feedback-color:              darken($sidebar-color, 2%);
+
+// ---- ink ----
+$body-text-color:             #2f2a26;  // warm charcoal
+$body-heading-color:          #1c1a18;
+$nav-child-link-color:        #4a4640;
+$link-color:                  #0f7a6b;  // emerald teal
+$btn-primary-color:           $link-color;
+$base-button-color:           $body-background-color;
+
+// ---- lines / chrome ----
+$border-color:                #e2d9c6;
+$search-result-preview-color: #6a645a;
+
+// ---- code ----
+$code-background-color:       #efe7d1;
+$code-linenumber-color:       #988e79;
+
+$link-color-visited:          darken($link-color, 8%);
