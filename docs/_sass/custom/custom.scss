@@ -1,7 +1,6 @@
-// flaw docs polish. Typographic rhythm + quiet accents on top of the
-// gemstone palette. Restraint first — one accent (teal), one
-// support (blush) for severity only. Matches CronLord's editorial
-// feel but with a cooler prism-teal tint.
+// flaw docs polish. Typographic rhythm + a single red accent that
+// echoes the hero banner. Everything else is warm neutral paper,
+// rule, and chip. No competing hues.
 
 // ---- typography ----
 
@@ -12,12 +11,12 @@ $sans-body:     "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
 $mono:          "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo,
                 Consolas, "Liberation Mono", monospace;
 
-$flaw-teal:      #0f7a6b;
-$flaw-teal-deep: #0a5a4f;
-$flaw-paper:     #f7f4ed;
-$flaw-ink:       #1c1a18;
-$flaw-rule:      #e2d9c6;
-$flaw-chip-bg:   #efe7d1;
+$flaw-red:      #a32820;
+$flaw-red-deep: #7a1a13;
+$flaw-paper:    #f7f4ed;
+$flaw-ink:      #1c1a18;
+$flaw-rule:     #e2d9c6;
+$flaw-chip-bg:  #efe7d1;
 $flaw-chip-line: #d8caa8;
 
 // Paint the gemstone palette on top of just-the-docs' default light
@@ -39,7 +38,7 @@ body {
 }
 
 a:not(.btn):not(.flaw-chip):not(.nav-list-link) {
-  color: $flaw-teal;
+  color: $flaw-red;
 }
 
 h1, h2, h3, h4, h5, h6,
@@ -64,7 +63,7 @@ h1, h2, h3, h4, h5, h6,
     height: 0.55rem;
     margin-right: 0.55rem;
     border-radius: 50%;
-    background: $flaw-teal;
+    background: $flaw-red;
     transform: translateY(-0.15em);
   }
 }
@@ -97,16 +96,16 @@ p code, li code, td code, h1 code, h2 code, h3 code {
   font-size: 0.88em;
 }
 
-// Code blocks — printed listing with a teal left rail.
+// Code blocks — printed listing with a red left rail.
 div.highlighter-rouge, figure.highlight {
   border: 1px solid $flaw-chip-line;
-  border-left: 3px solid $flaw-teal;
+  border-left: 3px solid $flaw-red;
   border-radius: 6px;
   background: #fbf7e8;
   padding: 0.35rem 0.1rem;
 }
 
-// Tables — thin cream rules, teal header underline, zero chrome.
+// Tables — thin cream rules, red header underline, zero chrome.
 table {
   border-collapse: collapse;
   border: none;
@@ -116,7 +115,7 @@ table {
     font-weight: 600;
     text-transform: none;
     letter-spacing: 0;
-    border-bottom: 2px solid $flaw-teal;
+    border-bottom: 2px solid $flaw-red;
     background: transparent;
   }
   td {
@@ -129,23 +128,23 @@ table {
   }
 }
 
-// Primary buttons pick up the teal.
+// Primary buttons pick up the red.
 .btn-primary, .btn-outline {
-  background: $flaw-teal;
+  background: $flaw-red;
   color: $flaw-paper;
-  border: 1px solid $flaw-teal-deep;
+  border: 1px solid $flaw-red-deep;
 
   &:hover, &:focus {
-    background: $flaw-teal-deep;
+    background: $flaw-red-deep;
     color: $flaw-paper;
   }
 }
 
-// Active sidebar item: teal pill.
+// Active sidebar item: red pill.
 .nav-list .nav-list-item .nav-list-link.active {
   background: #e4dcc5;
   color: $flaw-ink;
-  border-left: 3px solid $flaw-teal;
+  border-left: 3px solid $flaw-red;
   padding-left: calc(1rem - 3px);
   font-weight: 500;
 }
@@ -160,7 +159,7 @@ table {
 }
 
 blockquote {
-  border-left: 3px solid $flaw-teal;
+  border-left: 3px solid $flaw-red;
   background: #f1ead6;
   padding: 0.6rem 1rem;
   margin-left: 0;
@@ -246,22 +245,22 @@ a {
       border-radius: 6px;
       font-family: $mono;
       font-size: 0.82rem;
-      border: 1px solid $flaw-teal-deep;
-      background: $flaw-teal;
+      border: 1px solid $flaw-red-deep;
+      background: $flaw-red;
       color: $flaw-paper;
 
       &:hover {
-        background: $flaw-teal-deep;
+        background: $flaw-red-deep;
         border-bottom-color: transparent;
       }
       &.ghost {
         background: transparent;
-        color: $flaw-teal-deep;
+        color: $flaw-red-deep;
         border: 1px solid $flaw-chip-line;
 
         &:hover {
           background: $flaw-chip-bg;
-          color: $flaw-teal-deep;
+          color: $flaw-red-deep;
         }
       }
     }
@@ -309,7 +308,7 @@ a {
   border-radius: 4px;
   border: 1px solid $flaw-chip-line;
   background: $flaw-chip-bg;
-  color: $flaw-teal-deep;
+  color: $flaw-red-deep;
 }
 
 // Severity pills — single palette, muted, consistent.
@@ -323,10 +322,14 @@ a {
   letter-spacing: 0.02em;
   border: 1px solid $flaw-chip-line;
   background: $flaw-chip-bg;
-  color: $flaw-teal-deep;
+  color: $flaw-red-deep;
 }
-// Only critical stands out.
-.sev-critical { background: #f4e0d4; color: #7a2b1a; border-color: #e2c4b2; }
+// Only critical stands out — filled red, ink-on-red.
+.sev-critical {
+  background: $flaw-red;
+  color: $flaw-paper;
+  border-color: $flaw-red-deep;
+}
 
 // Category cards (FLAW1xx summary).
 .flaw-cats {
@@ -351,7 +354,7 @@ a {
     display: block;
     font-family: $mono;
     font-size: 0.72rem;
-    color: $flaw-teal-deep;
+    color: $flaw-red-deep;
     margin-bottom: 0.35rem;
     letter-spacing: 0.02em;
   }
